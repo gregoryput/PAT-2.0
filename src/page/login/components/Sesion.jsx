@@ -1,6 +1,9 @@
 import { Button, Input } from "@/components";
+import axiosClient from "@/config/axios";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+
+const fetcher = (url) => axiosClient.api().get(url).then((res) => res.data);
 
 export default function Sesion() {
   const {
@@ -8,6 +11,8 @@ export default function Sesion() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const { data, error } = useSWR('/api/data', fetcher);
 
   const [t] = useTranslation("global");
   const onSubmit = (data) => {
