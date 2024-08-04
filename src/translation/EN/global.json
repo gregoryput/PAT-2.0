@@ -157,7 +157,7 @@
 
   "Welcome": "Welcome",
   "login_text": "Login in",
-  "Developerby": "Developer by",
+  "Developerby": "Developed by",
   "username": "Username",
   "password": "Password",
   "sub-title": "Efficient management, brilliant results.",
@@ -165,5 +165,6 @@
   "title-description": "Hola!! 👋",
   "description": "Has cambiado de Idioma",
   "errors.Usuario": "Enter required user.",
-  "errors.Password": "Please enter a valid password."
+  "errors.Password": "Please enter a valid password.",
+  "errors.InfoLogin": "Incorrect username or password"
 }

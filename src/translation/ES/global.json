@@ -166,5 +166,6 @@
    "title-description":"Hello!! 👋",
   "description":"You have changed the language",
   "errors.Usuario":"Ingresa usuario requerido.",
-  "errors.Password":"Ingresa una contraseña válida."
+  "errors.Password":"Ingresa una contraseña válida.",
+  "errors.InfoLogin":"Usuario o Contraseña incorrecto "
 }

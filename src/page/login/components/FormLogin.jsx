@@ -1,22 +1,48 @@
+import { getLogin } from "@/api/AuthApi";
 import { Button, Input } from "@/components";
-import axiosClient from "@/config/axios";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+//librerias de icons
+import { Loader2 } from "lucide-react";
+import { toast, Toaster } from "sonner";
+import { useNavigate } from "react-router-dom";
 
-const fetcher = (url) => axiosClient.api().get(url).then((res) => res.data);
-
-export default function Sesion() {
+export default function FormLogin() {
+  const [t] = useTranslation("global");
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const { data, error } = useSWR('/api/data', fetcher);
+  const requestLogin = useMutation({
+    mutationFn: getLogin,
+    onSuccess: (data) => {
+      toast.success("Project Administration Tool", {
+        description: `${t("Welcome")}`,
+      });
+      localStorage.setItem("token",data.token)
+      localStorage.setItem("Rol", "Users");
+      navigate("/")
+    },
+    onError: () => {
+      toast.error("Project Administration Tool", {
+        description: `${t("errors.InfoLogin")}`,
+      });
+    },
+  });
 
-  const [t] = useTranslation("global");
   const onSubmit = (data) => {
-    console.log(data);
+    let dataJson = {
+      _username: data.User,
+      _password: data.Password,
+      _language: localStorage.getItem("_lang").toLowerCase(),
+    };
+
+    requestLogin.mutate(dataJson);
+    
   };
 
   return (
@@ -29,13 +55,13 @@ export default function Sesion() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="my-10">
           <Input
-            id="Usuario"
+            id="User"
             type="text"
-            {...register("Usuario", { required: true })}
+            {...register("User", { required: true })}
             placeholder={`${t("username")}`}
             className="w-96"
           />
-          {errors.Usuario && (
+          {errors.User && (
             <p className="text-red-500 text-sm mt-1">{t("errors.Usuario")}</p>
           )}
         </div>
@@ -55,10 +81,17 @@ export default function Sesion() {
 
         <div>
           <Button type="Submit" disabled={false} className="mt-10 w-96">
-            {t("login_text")}
+            {requestLogin.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              </>
+            ) : (
+              <>{t("login_text")}</>
+            )}
           </Button>{" "}
         </div>
       </form>
+      <Toaster richColors position="top-right" />
     </section>
   );
 }

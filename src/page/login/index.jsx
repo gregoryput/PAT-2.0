@@ -2,7 +2,7 @@ import imgLogoCemex from "../../assets/res/cemexLogo.webp";
 import logo from "../../assets/LogoPat.svg";
 import "./login.css";
 import { toast, Toaster } from "sonner";
-import Sesion from "./components/Sesion";
+import FormLogin from "./components/FormLogin";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { useEffect, useState } from "react";
@@ -62,7 +62,7 @@ export default function Login() {
           </div>
         </div>
 
-        <Sesion />
+        <FormLogin />
 
         <footer className=" w-full  h-24 absolute bottom-0 left-0 flex flex-col  justify-center items-center ">
           <div className="flex items-center gap-2 ">
@@ -110,7 +110,7 @@ export default function Login() {
         </p>
       </section>
 
-      <Toaster />
+      <Toaster richColors   position="top-right" />
     </div>
   );
 }
