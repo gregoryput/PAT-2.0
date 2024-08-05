@@ -105,7 +105,7 @@ export default function Menu() {
                 <Label htmlFor="year">Año</Label>
                 <Select onValueChange={(value) => setValue("year", value)}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="2024" />
+                    <SelectValue placeholder={ubicacion?.year} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -133,7 +133,7 @@ export default function Menu() {
                   }}
                 >
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Republica Dominicana" />
+                    <SelectValue placeholder={ubicacion?.pais} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>

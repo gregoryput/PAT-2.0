@@ -1,6 +1,6 @@
 import ProtectedRoute from "@/router/ProtectedRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ProjectView } from "./page/views";
+import { Home } from "./page/views";
 import { Login, PageError } from "./page";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
@@ -20,10 +20,10 @@ const router = createBrowserRouter([
     errorElement: <PageError />,
     children: [
       {
-        path: "/project",
+        path: "/home",
         element: (
           <ProtectedRoute roles={["Users"]}>
-            <ProjectView />
+            <Home />
           </ProtectedRoute>
         ),
       },

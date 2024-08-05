@@ -25,7 +25,9 @@ export default function FormLogin() {
       });
       localStorage.setItem("token",data.token)
       localStorage.setItem("Rol", "Users");
-      navigate("/")
+      setTimeout(()=>{
+        navigate("/Home")
+      },500)
     },
     onError: () => {
       toast.error("Project Administration Tool", {

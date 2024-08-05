@@ -85,7 +85,7 @@ export default function Search() {
     });
   };
 
-  const filtrado = (select, buttonValue) => {
+  const filtrado = (select, value) => {
     let d = agregarPorCumplimineto(data);
     if (select == "Plataforma") {
       setButtonValue(0);
@@ -100,7 +100,6 @@ export default function Search() {
     }
     if (select == "Todos") {
       setButtonValue(0);
-
       setDataState(d);
     }
     if (select == "Mis proyectos") {
@@ -113,22 +112,21 @@ export default function Search() {
       );
     }
 
-    if (buttonValue == "1") {
-
+    if (value == "1") {
+      setButtonValue(1);
       let dat = d?.filter((item) => item.cumplimientoClasificacion == "1");
       setDataState(dat);
-    } else if (buttonValue == "2") {
-   
+    } else if (value == "2") {
+      setButtonValue(2);
 
       let dat = d?.filter((item) => item.cumplimientoClasificacion == "2");
       setDataState(dat);
-    } else if (buttonValue == "3") {
-    
+    } else if (value == "3") {
+      setButtonValue(3);
 
       let dat = d?.filter((item) => item.cumplimientoClasificacion == "3");
       setDataState(dat);
     }
-
   };
 
   useEffect(() => {
@@ -159,7 +157,7 @@ export default function Search() {
   }, [inputValue]);
 
   return (
-    <div className="w-[400px] h-screen absolute top-0 border-r ">
+    <div className="w-[400px] h-screen absolute top-0 border-r bg-white ">
       <div className="px-5">
         <section className="  flex items-center h-[70px] ">
           <h3 className=" text-[15px] font-bold">
@@ -198,13 +196,25 @@ export default function Search() {
               <Button variant="ghost">
                 <ListFilter className=" w-5 h-5 text-gray-400" />
                 <Label className="ml-2 text-gray-500">Filtrar</Label>
-
                 <div className=" absolute left-32 w-18 bg-gray-200 rounded-lg px-5 py-2  text-gray-400">
                   <Label>{currentSelect}</Label>
                 </div>
-                <div className=" absolute left-56 w-18 bg-gray-200 rounded-lg px-5 py-2  text-gray-400">
-                  <Label>{buttonValue == "1" ? "Alto":null}</Label>
-                </div>
+
+                {buttonValue !== 0 ? (
+                  <>
+                    <div className=" absolute left-56 w-18 bg-gray-200 rounded-lg px-5 py-2  text-gray-400">
+                      <Label>
+                        {buttonValue == "1"
+                          ? "Alto"
+                          : buttonValue == "2"
+                          ? "Medio"
+                          : buttonValue == "3"
+                          ? "Bajo"
+                          : null}
+                      </Label>
+                    </div>
+                  </>
+                ) : null}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="ml-20 flex gap-2  w-[500px] bg-blue-800 text-white">
@@ -277,12 +287,12 @@ export default function Search() {
           </Popover>
         </section>
       </div>
-      <ScrollArea className="viewport p-2">
+      <ScrollArea className="viewport p-2 ">
         <div className="flex flex-col h-full cursor-pointer">
           {dataState?.map((item, i) => (
             <div
               key={i}
-              className="border m-1 p-3 rounded-[10px] hover:bg-slate-100 "
+              className="border m-1 p-3 rounded-[10px] bg-white hover:bg-slate-100 "
             >
               <div className="flex justify-between items-center">
                 <div className="w-[290px]">
