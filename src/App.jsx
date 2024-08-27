@@ -1,6 +1,6 @@
 import ProtectedRoute from "@/router/ProtectedRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home } from "./page/views";
+import { Home, Project } from "./page/views";
 import { Login, PageError } from "./page";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
@@ -24,6 +24,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute roles={["Users"]}>
             <Home />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/project/:projectId",
+        element: (
+          <ProtectedRoute roles={["Users"]}>
+            <Project />
           </ProtectedRoute>
         ),
       },

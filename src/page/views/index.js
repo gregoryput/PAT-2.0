@@ -1,7 +1,7 @@
 import Home from "./home"
-import ProjectView from "./projectView"
+import Project from "./project"
 
 export{
     Home,
-    ProjectView
+    Project
 }

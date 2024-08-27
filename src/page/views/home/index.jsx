@@ -1,4 +1,3 @@
-import Search from "@/layout/components/search";
 import "./home.css";
 import {
   CircleDollarSign,
@@ -15,8 +14,9 @@ import {
 } from "@/components/ui/chart";
 import { fetcher } from "@/api/api";
 import useSWR from "swr";
-import useSearch from "@/hook/useStore";
+import useSearch from "@/hook/useSearch";
 import CountUp from "react-countup";
+import PropTypes from "prop-types";
 
 export default function Home() {
   const { ubicacion } = useSearch();
@@ -28,32 +28,31 @@ export default function Home() {
   );
 
   const chartData = [
-    { pais: data?.nombreProyecto, Asginado: data?.montoAsignado, Disponible: data?.montoDisponible },
+    {
+      pais: data?.nombreProyecto,
+      Asginado: data?.montoAsignado,
+      Disponible: data?.montoDisponible,
+    },
   ];
   return (
-    <div className="">
-      <Search />
-
+    <>
       <div>
-        <div className="ml-[400px] pl-10  ">
+        <div className=" pl-5  ">
           <h1 className="text-[40px] mt-5 font-extrabold">
             {data?.nombreProyecto}
           </h1>
         </div>
-        <div className="ml-[400px] p-5 mt-2 flex flex-wrap justify-around">
+        <div className=" p-5 mt-2 flex flex-wrap justify-around">
           <div className=" p-5  rounded-sm w-[230px]  ">
             <div className="flex justify-between mb-5 ">
               <p className=" font-semibold">Presupuesto</p>
               <CircleDollarSign />
             </div>
 
-            <h2 className=" font-bold text-[30px]">  <CountUp
-                start={0}
-                end={data?.budget}
-                duration={4}
-                prefix="$"
-                
-              /></h2>
+            <h2 className=" font-bold text-[30px]">
+              {" "}
+              <CountUp start={0} end={data?.budget} duration={4} prefix="$" />
+            </h2>
           </div>
 
           <div className=" p-5  rounded-sm  w-[230px] ">
@@ -68,7 +67,6 @@ export default function Home() {
                 end={data?.montoReal}
                 duration={4}
                 prefix="$"
-               
               />
             </h2>
           </div>
@@ -80,13 +78,11 @@ export default function Home() {
             </div>
 
             <h2 className=" font-bold text-[30px]">
-             
               <CountUp
                 start={0}
                 end={data?.montoComprometido}
                 duration={4}
                 prefix="$"
-              
               />
             </h2>
           </div>
@@ -97,29 +93,27 @@ export default function Home() {
               <PiggyBank />
             </div>
 
-            <h2 className=" font-bold text-[30px]">  <CountUp
+            <h2 className=" font-bold text-[30px]">
+              {" "}
+              <CountUp
                 start={0}
                 end={data?.montoDisponible}
                 duration={4}
                 prefix="$"
-                
-              /></h2>
+              />
+            </h2>
           </div>
         </div>
       </div>
 
-      <div className="ml-[400px] flex justify-center mt-24">
-        <Component chartData={chartData} />
+      <div className="flex justify-center mt-24">
+        {chartData && <Component chartData={chartData} />}
       </div>
-    </div>
+    </>
   );
 }
 
-
-
-export function Component({chartData}) {
-
-  
+function Component({ chartData }) {
   const chartConfig = {
     Asginado: {
       label: "Asginado ",
@@ -141,15 +135,14 @@ export function Component({chartData}) {
           axisLine={false}
           tickFormatter={(value) => value.slice(0, 50)}
         />
-        <ChartTooltip className="w-[300px]"  content={<ChartTooltipContent />} />
-        <Bar
-          dataKey="Disponible"
-          fill="var(--color-Disponible)"
-          radius={4}
-          
-        />
+        <ChartTooltip className="w-[300px]" content={<ChartTooltipContent />} />
+        <Bar dataKey="Disponible" fill="var(--color-Disponible)" radius={4} />
         <Bar dataKey="Asginado" fill="var(--color-Asginado)" radius={4} />
       </BarChart>
     </ChartContainer>
   );
 }
+
+Component.propTypes = {
+  chartData: PropTypes.array
+};

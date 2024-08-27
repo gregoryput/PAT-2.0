@@ -14,18 +14,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components";
-import useSearch from "@/hook/useStore";
+import useActiveSearch from "@/hook/useActiveSearch";
+import useProject from "@/hook/useProject";
+import useSearch from "@/hook/useSearch";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { SelectGroup } from "@radix-ui/react-select";
-import { Annoyed, Frown, Laugh, ListFilter, SearchIcon, X } from "lucide-react";
+import {
+  Annoyed,
+  Frown,
+  Laugh,
+  ListFilter,
+  Loader2,
+  SearchIcon,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
+import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 
 export default function Search() {
   const { ubicacion } = useSearch();
+  const { activo } = useActiveSearch();
 
-  const { data } = useSWR(
+  const { project, setProject } = useProject();
+
+  const { data, isLoading } = useSWR(
     ubicacion
       ? `Projects/AccomplishmentInformation?year=${ubicacion.year}&paisId=${ubicacion.paisID}`
       : null,
@@ -34,35 +48,52 @@ export default function Search() {
     { refreshInterval: 360000, revalidateOnFocus: false }
   );
 
-  const { data: naturaleza } = useSWR("/Pais/GetNaturaleza", fetcher, {
-    refreshInterval: false,
-    revalidateOnFocus: false,
-  });
+  const { data: naturaleza, isLoading: l } = useSWR(
+    "/Pais/GetNaturaleza",
+    fetcher,
+    {
+      refreshInterval: false,
+      revalidateOnFocus: false,
+    }
+  );
 
   const [selectData, setSelectData] = useState([]);
   const [currentSelect, setCurrentSelect] = useState("Todos");
   const [dataState, setDataState] = useState([]);
-
   const [inputValue, setInputValue] = useState("");
   const [buttonValue, setButtonValue] = useState(0);
+
+  const navigate = useNavigate();
+
+  const projectSelect = (data) => {
+    let dataJson = {
+      projectId: data.idProjectoSAP,
+      year: data.year,
+    };
+    setProject(dataJson);
+    navigate(`/project/${data.idProjectoSAP}`);
+  };
 
   const handleChange = (event) => {
     const searchTerm = event.target.value;
     setInputValue(searchTerm);
 
-    if (searchTerm === "") {
+    if (searchTerm == "") {
       setDataState(dataState);
     } else {
-      const filter = dataState?.filter((item) =>
-        item.projectName.toUpperCase().includes(searchTerm.toUpperCase())
+      const filter = dataState?.filter(
+        (item) =>
+          item.projectName.toUpperCase().includes(searchTerm.toUpperCase()) ||
+          item.responsable.toUpperCase().includes(searchTerm.toUpperCase())
       );
       setDataState(filter);
     }
   };
-  const agregarPorCumplimineto = (data) => {
+
+  const agregarPorCumplimiento = (data) => {
     return data?.map((item) => {
       let cumplimientoClasificacion = "";
-
+  
       // Clasificar el cumplimiento
       if (item.cumplimiento > 105) {
         cumplimientoClasificacion = "n/a"; // No especificado, ajusta según tus necesidades
@@ -76,17 +107,17 @@ export default function Search() {
         }
         cumplimientoClasificacion = "3";
       }
-
-      // Devolver el objeto modificado con la clasificación de cumplimiento
+  
       return {
         ...item,
         cumplimientoClasificacion,
       };
     });
   };
+  
 
   const filtrado = (select, value) => {
-    let d = agregarPorCumplimineto(data);
+    let d = agregarPorCumplimiento(data);
     if (select == "Plataforma") {
       setButtonValue(0);
       setDataState(d?.filter((item) => item.narutalezaNombre === "Plataforma"));
@@ -142,34 +173,42 @@ export default function Search() {
   }, [naturaleza]);
 
   useEffect(() => {
-    let d = agregarPorCumplimineto(data);
+    let d = agregarPorCumplimiento(data);
     setDataState(d);
     setCurrentSelect("Todos");
   }, [data]);
 
   useEffect(() => {
     if (inputValue == "") {
-      let d = agregarPorCumplimineto(data);
+      let d = agregarPorCumplimiento(data);
       setDataState(d);
     } else {
       setCurrentSelect("Todos");
     }
   }, [inputValue]);
 
+  if (isLoading || l)
+    return (
+      <div className="w-full h-full flex justify-center  items-center">
+        <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-600 " />
+      </div>
+    );
+
   return (
-    <div className="w-[400px] h-screen absolute top-0 border-r bg-white ">
-      <div className="px-5">
-        <section className="  flex items-center h-[70px] ">
+    <div className={` h-full w-[390px] absolute border-r top-0 ${activo? "desplegar-izquierda" : "despliegueDerecha"}  bg-white `}>
+      <div className="px-5 ">
+        <section className=" flex items-center h-[70px] bg-white  ">
           <h3 className=" text-[15px] font-bold">
             Project Administration Tool
           </h3>
+         
         </section>
 
         <section>
           <div className="flex items-center justify-between py-5 ">
             <p className="font-bold text-[25px]  ">Proyectos</p>
-            <span className="text-gray-400 mr-5 text-[20px]">
-              <CountUp start={0} end={dataState?.length} duration={4} />
+            <span className=" mr-5 text-[22px] font-bold">
+             { data?.length}
             </span>
           </div>
           <div className="relative flex items-center pb-5">
@@ -196,13 +235,13 @@ export default function Search() {
               <Button variant="ghost">
                 <ListFilter className=" w-5 h-5 text-gray-400" />
                 <Label className="ml-2 text-gray-500">Filtrar</Label>
-                <div className=" absolute left-32 w-18 bg-gray-200 rounded-lg px-5 py-2  text-gray-400">
+                <div className=" absolute left-32 w-18 bg-gray-100 rounded-lg px-5 py-2  text-gray-700">
                   <Label>{currentSelect}</Label>
                 </div>
 
                 {buttonValue !== 0 ? (
                   <>
-                    <div className=" absolute left-56 w-18 bg-gray-200 rounded-lg px-5 py-2  text-gray-400">
+                    <div className=" absolute left-56 w-18 bg-blue-700 rounded-lg px-5 py-2  text-white">
                       <Label>
                         {buttonValue == "1"
                           ? "Alto"
@@ -217,7 +256,7 @@ export default function Search() {
                 ) : null}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="ml-20 flex gap-2  w-[500px] bg-blue-800 text-white">
+            <PopoverContent className="ml-20 flex gap-2 border-none  w-[500px] bg-blue-800 text-white">
               <Select
                 onValueChange={(value) => {
                   filtrado(value);
@@ -289,10 +328,17 @@ export default function Search() {
       </div>
       <ScrollArea className="viewport p-2 ">
         <div className="flex flex-col h-full cursor-pointer">
-          {dataState?.map((item, i) => (
+          {dataState?.map((item) => (
             <div
-              key={i}
-              className="border m-1 p-3 rounded-[10px] bg-white hover:bg-slate-100 "
+              key={item?.idProjectoSAP}
+              className={`border m-1 p-3 rounded-[10px] ${
+                item.idProjectoSAP == project.projectId
+                  ? "bg-blue-800 text-white"
+                  : "  bg-white hover:bg-slate-100 "
+              } `}
+              onClick={() => {
+                projectSelect(item);
+              }}
             >
               <div className="flex justify-between items-center">
                 <div className="w-[290px]">
@@ -315,7 +361,14 @@ export default function Search() {
                 </div>
               </div>
               <div className="mt-3">
-                <Badge variant="outline" className="text-[11px]">
+                <Badge
+                  variant="outline"
+                  className={`text-[11px] ${
+                    item.idProjectoSAP == project.projectId
+                      ? "bg-blue-800 text-white"
+                      : "   hover:bg-slate-100 "
+                  }`}
+                >
                   {item.narutalezaNombre}
                 </Badge>
               </div>

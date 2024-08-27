@@ -73,3 +73,9 @@
 }
 
 
+/* @media screen and (min-width: 1000px), screen and (min-height: 1000px) {
+  
+  html {
+    overflow: hidden;
+  }
+} */

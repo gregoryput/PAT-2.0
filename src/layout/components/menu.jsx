@@ -1,8 +1,5 @@
 import { fetcher } from "@/api/api";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -21,16 +18,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components";
-import useSearch from "@/hook/useStore";
+import useSearch from "@/hook/useSearch";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { SelectGroup } from "@radix-ui/react-select";
 
 import { Github, LifeBuoy, LogOut, SearchIcon, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 
 
 export default function Menu() {
+
+
+
+  const [userName,setUserName] = useState(localStorage.getItem("Username"))
   // esta son la consultas
   const { data: dataPais } = useSWR("/Pais/Pais", fetcher);
   const { data: fecha } = useSWR("/Pais/GetYear", fetcher);
@@ -61,12 +64,20 @@ export default function Menu() {
 
     setUbicacion(namedValues);
   };
+
+  const navigate = useNavigate();
+  
+  useEffect(()=>{
+    setUserName(localStorage.getItem("Username"))
+  },[])
+  
+  
   return (
-    <div className="h-[70px] flex justify-between items-center px-5 ">
-      <div className="pl-[400px] text-gray-400 ">
+    <div className="bg-white h-full flex justify-between items-center  ">
+      <div className=" text-gray-400 ">
         <Popover>
           <PopoverTrigger asChild>
-            <div className="relative flex items-center">
+            <div className="relative flex items-center ml-5">
               <SearchIcon className="absolute left-3 w-5 h-5" />
               <Button
                 className="pl-10 hover:bg-blue-700 hover:text-white"
@@ -156,12 +167,16 @@ export default function Menu() {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className=" flex  items-center gap-5 px-5 cursor-pointer ">
-            <p className="text-gray-400 font-light">Raymond Diplan Torres</p>
-            <Avatar>
+          <div className=" flex  items-center gap-5 px-5 cursor-pointer mr-2 ">
+            <p className="text-gray-400 font-light">{userName}</p>
+            {/* <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            </Avatar> */}
+
+            <div className="w-11 h-11 bg-blue-700 rounded-full flex items-center justify-center">
+              <p className="text-white font-bold text-[16px]">{userName?.slice(0,1)}</p>
+            </div>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -187,6 +202,7 @@ export default function Menu() {
           <DropdownMenuItem
             onClick={() => {
               localStorage.clear();
+              navigate("/login");
             }}
           >
             <LogOut className="mr-2 h-4 w-4" />

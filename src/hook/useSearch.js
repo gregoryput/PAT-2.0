@@ -1,4 +1,4 @@
-import create from 'zustand';
+import {create} from 'zustand';
 
 const useSearch = create((set) => ({
     ubicacion: {
@@ -10,3 +10,5 @@ const useSearch = create((set) => ({
     setUbicacion: (nuevaUbicacion) => set({ ubicacion: nuevaUbicacion }),
   }));
 export default useSearch;
+
+
