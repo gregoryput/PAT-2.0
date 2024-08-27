@@ -79,6 +79,7 @@ export default function ComponenteGraficos({data,grafica}) {
                             </BarChart>
                         </ChartContainer>
                     </div>
+
                     <div className=" max-w-[500px] p-1">
                         <div>
                             <p className="font-bold p-2">Real/Comprometido</p>

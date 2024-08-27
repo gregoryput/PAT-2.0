@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 dayjs.extend(customParseFormat);
 
 export default function ActiividadDetail({ activo, selectedActividad }) {
-    console.log(selectedActividad);
+
     return (
         <>
             {
@@ -95,7 +95,7 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                         >
                                             <div className="flex  justify-between items-center">
                                                 <div className="flex gap-2 justify-center items-center">
-                                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                                                    <div className="w-6 h-6 bg-blue-300 rounded-full flex items-center justify-center">
                                                         <p className="text-white font-bold text-[10px]">{data?.nombreCompleto?.slice(0, 1)}</p>
                                                     </div>
                                                     <p className="font-bold">{data.nombreCompleto}</p>

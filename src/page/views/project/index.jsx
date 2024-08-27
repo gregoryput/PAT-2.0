@@ -62,13 +62,13 @@ export default function Project() {
 
       <section className=" w-full h-[80%] flex  ">
 
-        <section className=" flex">
+        <section className="flex">
           <Actividad actividad={actividad} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} setStatusActividad={setStatusActividad} toggleActivoForFalse={toggleActivoForFalse} />
           <ActiividadDetail activo={activo} selectedActividad={selectedActividad} />
         </section>
 
-      <ComponenteGraficos data={data} grafica={grafica} />
-        <ComentarioGalerias /> 
+        <ComponenteGraficos data={data} grafica={grafica} />
+        <ComentarioGalerias />
       </section>
     </>
   );
