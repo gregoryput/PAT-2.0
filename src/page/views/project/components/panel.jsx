@@ -24,7 +24,7 @@ export default function Panel({ data, project, status }) {
     return (
         <>
 
-            <div className="w-full flex h-[20%] border-b py-1 ">
+            <div className="w-full flex min-h-[150px] h-[20%] border-b py-1 ">
                 <section className=" h-full w-[40%] flex ">
                     <div className="flex flex-col">
                         <div>

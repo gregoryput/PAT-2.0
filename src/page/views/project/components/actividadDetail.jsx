@@ -1,4 +1,4 @@
-import { Button, ScrollArea } from "@/components";
+import { Button, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@/components";
 import { Inbox, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -9,13 +9,21 @@ dayjs.extend(customParseFormat);
 
 export default function ActiividadDetail({ activo, selectedActividad }) {
 
+    const truncateText = (text, maxLength) => {
+        if (text.length <= maxLength) {
+            return text;
+        }
+        return text.slice(0, maxLength) + '...';
+    }
+
+    console.log(selectedActividad)
     return (
         <>
             {
-                selectedActividad?.responsableAuthor !== undefined ?
+                selectedActividad?.responsableAuthor !== undefined  ?
                     <>
                         <div
-                            className={`bg-white ${activo === true
+                            className={`bg-white  ${activo === true
                                 ? "w-[360px] h-full border-r px-2 relative visible "
                                 : " h-full border-r px-2 relative  hidden "
                                 } `}
@@ -23,14 +31,21 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                             <div className="p-3 border-b h-[65px] flex justify-between items-center">
                                 <span className=" font-bold text-[18px]">Actividad </span>
                             </div>
-                            <div className="border-b   text-[12px] p-1 ">
+                            <div className="border-b  relative  text-[12px] p-1 ">
                                 <h2 className="mt-2 mb-3 font-bold">
-                                    {selectedActividad?.title?.toUpperCase()}
+                                    {truncateText(selectedActividad?.title?.toUpperCase(), 90)}
                                 </h2>
                                 {selectedActividad?.description == "undefined" ? null : (
-                                    <div >
-                                        <p>{selectedActividad?.description}</p>
+                                    <div>
+                                        <Popover>
+                                            <PopoverTrigger className="font-semibold">
+                                                Descripcion
+                                            </PopoverTrigger>
+                                            <PopoverContent><p className="text-justify text-[12px]">{selectedActividad?.description}</p></PopoverContent>
+                                        </Popover>
+
                                     </div>
+
                                 )}
 
                                 <div>
@@ -81,11 +96,11 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                 </div>
 
                             </div>
-                            <ScrollArea className="h-[35vh]">
-                                {selectedActividad?.listaComentario == undefined ? <>
+                            <ScrollArea className="min-h-[35vh] h-[40vh] max-h-[45vh]">
+                                {selectedActividad?.listaComentario == undefined || selectedActividad?.listaComentario?.length == 0 ? <>
                                     <div className="flex flex-col h-64 justify-center items-center text-gray-500">
                                         <Inbox width={50} />
-                                        <p>Sin Comenetarios</p>
+                                        <p className="text-[13px]">Sin comentarios</p>
                                     </div>
                                 </> : <>
                                     {selectedActividad?.listaComentario?.map((data) => (
@@ -123,7 +138,8 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                 </Button>
                             </div>
                         </div>
-                    </> : null
+                    </> :
+                    null
             }
         </>
     );

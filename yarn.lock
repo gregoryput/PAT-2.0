@@ -2958,6 +2958,11 @@ react-i18next@^15.0.0:
     "@babel/runtime" "^7.24.8"
     html-parse-stringify "^3.0.1"
 
+react-image@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/react-image/-/react-image-4.1.0.tgz#92f2d4a809a178b3bf69acd7bad7da7aa5e7364c"
+  integrity sha512-qwPNlelQe9Zy14K2pGWSwoL+vHsAwmJKS6gkotekDgRpcnRuzXNap00GfibD3eEPYu3WCPlyIUUNzcyHOrLHjw==
+
 react-is@^16.10.2, react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"

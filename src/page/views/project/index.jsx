@@ -10,7 +10,7 @@ import Panel from "./components/panel";
 import { Loader2 } from "lucide-react";
 import ComponenteGraficos from "./components/componenteGraficos";
 import Actividad from "./components/actividad";
-import ActiividadDetail from "./components/actiividadDetail";
+import ActiividadDetail from "./components/actividadDetail";
 import ComentarioGalerias from "./components/comentarioGalerias";
 
 
@@ -65,8 +65,7 @@ export default function Project() {
         <section className="flex">
           <Actividad actividad={actividad} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} setStatusActividad={setStatusActividad} toggleActivoForFalse={toggleActivoForFalse} />
           <ActiividadDetail activo={activo} selectedActividad={selectedActividad} />
-        </section>
-
+        </section> 
         <ComponenteGraficos data={data} grafica={grafica} />
         <ComentarioGalerias />
       </section>

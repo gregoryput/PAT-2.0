@@ -17,9 +17,9 @@ export default function Layout() {
     if (token !== null) {
       let decode = decodeJwt2(token);
       if (decode.exp < Date.now() / 1000) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("Rol");
-        localStorage.removeItem("Username");
+        localStorage.clear();
+        navigate("/login");
+
       }
       //localStorage.setItem("Rol", "Users");
       localStorage.setItem("Username", decode.unique_name);
@@ -39,9 +39,8 @@ export default function Layout() {
           <Nav />
         </div>
         <div
-          className={`w-[380px]  flex-shrink-0  ${
-            activo ? "desplegar-izquierda" : "desplegar-derecha"
-          }`}
+          className={`w-[380px]  flex-shrink-0  ${activo ? "desplegar-izquierda" : "desplegar-derecha"
+            }`}
         >
           <Search />
         </div>
