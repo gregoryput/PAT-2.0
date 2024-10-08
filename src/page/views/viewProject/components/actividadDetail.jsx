@@ -16,7 +16,6 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
         return text.slice(0, maxLength) + '...';
     }
 
-    console.log(selectedActividad)
     return (
         <>
             {
@@ -31,7 +30,7 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                             <div className="p-3 border-b h-[65px] flex justify-between items-center">
                                 <span className=" font-bold text-[18px]">Actividad </span>
                             </div>
-                            <div className="border-b  relative  text-[12px] p-1 ">
+                            <div className="border-b  relative  text-[12px] p-1  h-[24%]">
                                 <h2 className="mt-2 mb-3 font-bold">
                                     {truncateText(selectedActividad?.title?.toUpperCase(), 90)}
                                 </h2>
@@ -96,7 +95,7 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                 </div>
 
                             </div>
-                            <ScrollArea className="min-h-[35vh] h-[40vh] max-h-[45vh]">
+                            <ScrollArea className="min-h-[35vh] h-[43vh] max-h-[45vh]">
                                 {selectedActividad?.listaComentario == undefined || selectedActividad?.listaComentario?.length == 0 ? <>
                                     <div className="flex flex-col h-64 justify-center items-center text-gray-500">
                                         <Inbox width={50} />

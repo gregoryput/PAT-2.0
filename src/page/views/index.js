@@ -1,5 +1,5 @@
 import Home from "./home"
-import Project from "./project"
+import Project from "./viewProject"
 
 export{
     Home,

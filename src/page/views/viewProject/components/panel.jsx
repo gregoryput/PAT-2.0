@@ -1,25 +1,27 @@
-import { Button, ScrollArea } from "@/components";
-import { Bolt, ChartNoAxesColumnIncreasing } from "lucide-react";
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
+import { ChartNoAxesColumnIncreasing } from "lucide-react";
 import { useState } from "react";
 import PropTypes from 'prop-types';
 import dayjs from "dayjs";
 import Dashboard from "./dashboard";
+import ProjectForm from "./form/projectForm";
 
 
-export default function Panel({ data, project, status }) {
+export default function Panel({ data, status ,project }) {
     const [, setCopied] = useState(false);
 
     const handleCopyClick = async (textToCopy) => {
         try {
             await navigator.clipboard.writeText(textToCopy);
             setCopied(true);
-            setTimeout(() => setCopied(false), 2000); // Restablece el estado después de 2 segundos
+            setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error("Error al copiar el texto: ", err);
         }
     };
 
     const filter = status?.filter((state) => state.value === data?.estadoProjectId) || 0;
+    console.log()
 
     return (
         <>
@@ -34,13 +36,13 @@ export default function Panel({ data, project, status }) {
                             </div>
                         </div>
                         <ScrollArea className="w-full min-h-[20px] max-h-[96px] mb-1">
-                            <p className="text-justify font-extralight text-gray-400 mr-5">{data?.alcance}</p>
+                            <p className="text-justify font-extralight text-gray-500 mr-5">{data?.alcance}</p>
                         </ScrollArea>
 
                         <div className="flex text-gray-400 gap-2  text-[14px]">
                             <div className="mt-2 flex gap-2 ">
                                 <span className="text-gray-700 font-bold">Real</span>
-                                <p>{data?.lastUpdateReal ? dayjs(Date(data?.lastUpdateReal)).format('DD/MM/YY' ) : "N/A"}</p>
+                                <p>{data?.lastUpdateReal ? dayjs(Date(data?.lastUpdateReal)).format('DD/MM/YY') : "N/A"}</p>
                             </div>
                             <div className="mt-2 flex gap-2  ">
                                 <span className="text-gray-700 font-bold">Comprometido</span>
@@ -52,24 +54,36 @@ export default function Panel({ data, project, status }) {
                 </section>
                 <section className=" h-full w-[60%] flex flex-col ">
                     <div className=" w-full h-[50px] flex justify-between items-center mb-5 px-5">
-                        <div className="flex gap-4  py-2   text-gray-700 bg-gray-100 rounded-lg px-3 " >
-                            <p className="font-semibold border-r border-gray-700 pr-2">Estado </p>
-                            <p className="font-semibold"> {filter[0]?.label}</p>
-                        </div>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className={`flex gap-4  py-2 ${data?.estadoProjectId =="2"? "bg-green-500": data?.estadoProjectId =="1" ? "bg-orange-500" :"bg-blue-500"}  text-white  rounded-lg px-3 hover:bg-slate-200 hover:text-black`} >
+                                    <p className="font-semibold border-r border-white pr-2">Estado </p>
+                                    <p className="font-semibold"> {filter[0]?.label}</p>
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                                <DropdownMenuLabel>Cambiar Estado</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {status?.map((estado) => (
+                                    <DropdownMenuItem key={estado?.value}> {/* Asegúrate de tener un `key` único */}
+                                        <p className="font-semibold">{estado?.label}</p>
+                                    </DropdownMenuItem>
+                                ))}
+
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                         <div className="flex gap-5">
-                            <Button variant="ghost" className="gap-5 rounded-sm bg-gray-100  ">
+                            <Button variant="ghost" className="gap-5 rounded-sm bg-gray-100  hover:bg-blue-600 hover:text-white">
                                 Costo
                                 <ChartNoAxesColumnIncreasing width={20} />
                             </Button>
-                            <Button variant="ghost" className="gap-5  rounded-sm bg-gray-100 ">
-                                Editar
-                                <Bolt width={20} />
-                            </Button>
 
+                            <ProjectForm  status={status} filter={filter} />
                         </div>
                     </div>
 
-                   <Dashboard data={data}/>
+                    <Dashboard data={data} />
                 </section>
 
             </div>
@@ -95,4 +109,5 @@ Panel.propTypes = {
             label: PropTypes.string.isRequired,
         })
     ),
+
 };

@@ -52,10 +52,10 @@ export default function ComponenteGraficos({data,grafica}) {
 
     return (
         <>
-            <section className="flex w-[50%] justify-center ">
+            <section className="sm:mx-4 flex flex-col items-center w-[50%]">
 
                 <div className="w-full">
-                    <div className=" max-w-[450px] mb-2 p-1">
+                    <div className=" max-w-[500px] mb-2 p-1">
                         <div>
                             <p className="font-bold p-2">Best Estimated</p>
                         </div>
@@ -80,7 +80,7 @@ export default function ComponenteGraficos({data,grafica}) {
                         </ChartContainer>
                     </div>
 
-                    <div className=" max-w-[450px] p-1">
+                    <div className=" max-w-[500px] p-1">
                         <div>
                             <p className="font-bold p-2">Real/Comprometido</p>
                         </div>

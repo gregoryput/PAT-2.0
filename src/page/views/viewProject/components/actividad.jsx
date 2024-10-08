@@ -57,7 +57,7 @@ export default function Actividad({ actividad, selectedActividad, setSelectedAct
                     <p className="font-semibold  text-[12px] mt-2 " >{data.category}</p>
 
                     {
-                      data.status == 1 ? <>
+                      data?.status == 1 ? <>
                         <p className={`text-[12px] flex items-center gap-1 ${calcularDiasRestantes(data?.fechaInicio, data?.fechaFinal) <= 0 ? "text-red-600" : "text-green-500"}`}>
                           {calcularDiasRestantes(data?.fechaInicio, data?.fechaFinal)}
                           <AlarmClock strokeWidth={1.25} width={14} />
@@ -82,12 +82,12 @@ export default function Actividad({ actividad, selectedActividad, setSelectedAct
 Actividad.propTypes = {
   actividad: PropTypes.arrayOf(
     PropTypes.shape({
-      actividadId: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      author: PropTypes.string.isRequired,
-      category: PropTypes.string.isRequired,
+      actividadId: PropTypes.number,
+      title: PropTypes.string,
+      author: PropTypes.string,
+      category: PropTypes.string,
     })
-  ).isRequired,
+  ),
   selectedActividad: PropTypes.shape({
     actividadId: PropTypes.number,
     title: PropTypes.string,
