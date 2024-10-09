@@ -29,9 +29,9 @@ export default function Project() {
     { refreshInterval: false, revalidateOnFocus: false }
   );
 
-  
 
-  const { data: status } = useSWR('Projects/statusProject', fetcher, { refreshInterval: false, revalidateOnFocus: false })
+
+
   const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
   const { data: grafica } = useSWR(
     `Projects/realvsComprometido?projectId=${project.projectId}&year=${project.year}`,
@@ -60,7 +60,7 @@ export default function Project() {
 
   return (
     <>
-      <Panel data={data} project={project} status={status} />
+      <Panel data={data} project={project}  />
       <section className=" w-full h-[80%] flex  ">
         <section className="flex">
           <Actividad actividad={actividad} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} setStatusActividad={setStatusActividad} toggleActivoForFalse={toggleActivoForFalse} />

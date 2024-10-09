@@ -1,15 +1,18 @@
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
-import { useState } from "react";
+import {  useEffect, useLayoutEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import dayjs from "dayjs";
 import Dashboard from "./dashboard";
 import ProjectForm from "./form/projectForm";
+import {  useMutation } from "@tanstack/react-query";
+import axiosClient from "@/config/axios";
+import useSWR,{mutate} from "swr";
+import { fetcher } from "@/api/api";
 
 
-export default function Panel({ data, status ,project }) {
+export default function Panel({ data, project }) {
     const [, setCopied] = useState(false);
-
     const handleCopyClick = async (textToCopy) => {
         try {
             await navigator.clipboard.writeText(textToCopy);
@@ -20,8 +23,54 @@ export default function Panel({ data, status ,project }) {
         }
     };
 
-    const filter = status?.filter((state) => state.value === data?.estadoProjectId) || 0;
-    console.log()
+    //lista de estado del proyecto 
+    const { data: status } = useSWR('Projects/statusProject', fetcher, { 
+        refreshInterval: false, 
+        revalidateOnFocus: false 
+    });
+    
+    ///estado actual del proyecto 
+    const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, { 
+        refreshInterval: false, 
+        revalidateOnFocus: false 
+    });
+
+    /// estado local 
+
+    const [localStatus, setLocalStatus] = useState(null);
+    
+    useLayoutEffect(()=>{
+        setLocalStatus(getStatus)
+    })
+    
+    
+    const update = async (data) => {
+        const { data: response } = await axiosClient.api().post('/NewProject/NewStatusProject', data);
+        return response;
+    };
+    
+    const mutationUpdateStatus = useMutation({
+        mutationFn: update,
+        onSuccess: (data) => {
+            // Actualizamos el estado local de SWR con los nuevos datos
+            mutate(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, data, true);
+            
+        }
+    });
+    
+    const handleUpdateStatus = async (value) => {
+        let Json = {
+            projectIdSap: project.projectId,
+            estadoProject: value
+        };
+    
+        await mutationUpdateStatus.mutateAsync(Json);
+       
+       
+    };
+
+
+    
 
     return (
         <>
@@ -57,16 +106,16 @@ export default function Panel({ data, status ,project }) {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className={`flex gap-4  py-2 ${data?.estadoProjectId =="2"? "bg-green-500": data?.estadoProjectId =="1" ? "bg-orange-500" :"bg-blue-500"}  text-white  rounded-lg px-3 hover:bg-slate-200 hover:text-black`} >
+                                <button className={`flex gap-4  py-2 ${localStatus?.estadoDeProjectoId == "2" ? "bg-green-500" : localStatus?.estadoDeProjectoId == "1" ? "bg-orange-500" : "bg-blue-500"}  text-white  rounded-lg px-3 hover:bg-slate-200 hover:text-black`} >
                                     <p className="font-semibold border-r border-white pr-2">Estado </p>
-                                    <p className="font-semibold"> {filter[0]?.label}</p>
+                                    <p className="font-semibold"> {localStatus?.descripcion}</p>
                                 </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>Cambiar Estado</DropdownMenuLabel>
+                                <DropdownMenuLabel>Cambiar estado</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 {status?.map((estado) => (
-                                    <DropdownMenuItem key={estado?.value}> {/* Asegúrate de tener un `key` único */}
+                                    <DropdownMenuItem key={estado?.value} onClick={() => handleUpdateStatus(estado?.value)}>
                                         <p className="font-semibold">{estado?.label}</p>
                                     </DropdownMenuItem>
                                 ))}
@@ -79,7 +128,7 @@ export default function Panel({ data, status ,project }) {
                                 <ChartNoAxesColumnIncreasing width={20} />
                             </Button>
 
-                            <ProjectForm  status={status} filter={filter} />
+                            <ProjectForm status={status}  />
                         </div>
                     </div>
 
@@ -95,6 +144,7 @@ export default function Panel({ data, status ,project }) {
 Panel.propTypes = {
     data: PropTypes.shape({
         estadoProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        year: PropTypes.number,
         nombreProyecto: PropTypes.string.isRequired,
         alcance: PropTypes.string,
         lastUpdateReal: PropTypes.string,
