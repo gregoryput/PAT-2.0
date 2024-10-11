@@ -48,7 +48,7 @@ export default function ProjectForm({ data, project }) {
         mutationFn: update,
         onSuccess: () => {
             // Actualizamos el estado local de SWR con los nuevos datos
-            mutate(`/Projects/indicadoresDeCostoByProjectIdSap=${project.projectId}&year=${project.year}`, null, true);
+            mutate(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, null, true);
 
         },
 

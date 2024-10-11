@@ -32,7 +32,8 @@ export default function Panel({ data, project }) {
     ///estado actual del proyecto 
     const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, {
         refreshInterval: false,
-        revalidateOnFocus: false
+        revalidateOnFocus: false,
+        
     });
 
     /// estado local 

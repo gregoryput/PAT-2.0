@@ -24,7 +24,6 @@ export default function Project() {
   const { data, isLoading, error } = useSWR(
     `Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`,
     fetcher,
-
     { refreshInterval: false, revalidateOnFocus: false }
   );
 
