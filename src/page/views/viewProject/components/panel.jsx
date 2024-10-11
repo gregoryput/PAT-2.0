@@ -1,13 +1,13 @@
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
 import { ChartNoAxesColumnIncreasing } from "lucide-react";
-import {  useEffect, useLayoutEffect, useState } from "react";
+import {  useLayoutEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import dayjs from "dayjs";
 import Dashboard from "./dashboard";
 import ProjectForm from "./form/projectForm";
-import {  useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axiosClient from "@/config/axios";
-import useSWR,{mutate} from "swr";
+import useSWR, { mutate } from "swr";
 import { fetcher } from "@/api/api";
 
 
@@ -24,57 +24,56 @@ export default function Panel({ data, project }) {
     };
 
     //lista de estado del proyecto 
-    const { data: status } = useSWR('Projects/statusProject', fetcher, { 
-        refreshInterval: false, 
-        revalidateOnFocus: false 
+    const { data: status } = useSWR('Projects/statusProject', fetcher, {
+        refreshInterval: false,
+        revalidateOnFocus: false
     });
-    
+
     ///estado actual del proyecto 
-    const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, { 
-        refreshInterval: false, 
-        revalidateOnFocus: false 
+    const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, {
+        refreshInterval: false,
+        revalidateOnFocus: false
     });
 
     /// estado local 
 
     const [localStatus, setLocalStatus] = useState(null);
-    
-    useLayoutEffect(()=>{
+
+    useLayoutEffect(() => {
         setLocalStatus(getStatus)
     })
-    
-    
+
+
     const update = async (data) => {
         const { data: response } = await axiosClient.api().post('/NewProject/NewStatusProject', data);
         return response;
     };
-    
+
     const mutationUpdateStatus = useMutation({
         mutationFn: update,
         onSuccess: (data) => {
             // Actualizamos el estado local de SWR con los nuevos datos
             mutate(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, data, true);
-            
-        }
+
+        },
+
     });
-    
+
     const handleUpdateStatus = async (value) => {
         let Json = {
             projectIdSap: project.projectId,
             estadoProject: value
         };
-    
+
         await mutationUpdateStatus.mutateAsync(Json);
-       
-       
+
     };
 
 
-    
+
 
     return (
         <>
-
             <div className="w-full flex min-h-[150px] h-[20%] border-b py-1 ">
                 <section className=" h-full w-[40%] flex ">
                     <div className="flex flex-col">
@@ -106,7 +105,7 @@ export default function Panel({ data, project }) {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className={`flex gap-4  py-2 ${localStatus?.estadoDeProjectoId == "2" ? "bg-green-500" : localStatus?.estadoDeProjectoId == "1" ? "bg-orange-500" : "bg-blue-500"}  text-white  rounded-lg px-3 hover:bg-slate-200 hover:text-black`} >
+                                <button className={`flex gap-4  py-2 ${localStatus?.estadoDeProjectoId == "2" ? "bg-green-500" : localStatus?.estadoDeProjectoId == "1" ? "bg-orange-500" : localStatus?.estadoDeProjectoId == "3" ? "bg-red-500" : null}  text-white  rounded-lg px-3 hover:bg-slate-200 hover:text-black`} >
                                     <p className="font-semibold border-r border-white pr-2">Estado </p>
                                     <p className="font-semibold"> {localStatus?.descripcion}</p>
                                 </button>
@@ -128,7 +127,7 @@ export default function Panel({ data, project }) {
                                 <ChartNoAxesColumnIncreasing width={20} />
                             </Button>
 
-                            <ProjectForm status={status}  />
+                            <ProjectForm  data={data} project={project} />
                         </div>
                     </div>
 

@@ -19,7 +19,6 @@ import ComentarioGalerias from "./components/comentarioGalerias";
 export default function Project() {
   const { project } = useProject();
   const { activo, toggleActivoForFalse } = useActiveSearch();
-
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useSWR(
@@ -28,8 +27,6 @@ export default function Project() {
 
     { refreshInterval: false, revalidateOnFocus: false }
   );
-
-
 
 
   const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
@@ -43,7 +40,6 @@ export default function Project() {
   const [statusActividad, setStatusActividad] = useState(1);
   const [selectedActividad, setSelectedActividad] = useState({});
   const actividad = getActivity?.filter((state) => state.status === statusActividad);
-
 
   useEffect(() => {
     if (error) {
