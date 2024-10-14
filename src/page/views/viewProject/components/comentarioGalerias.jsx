@@ -1,16 +1,20 @@
 import { fetcher } from "@/api/api";
-import { ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
 import useProject from "@/hook/useProject";
 import dayjs from "dayjs";
-import { Inbox, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Edit2, EllipsisVertical, Inbox, Loader2, SendHorizontal, Trash } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Img } from "react-image";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { useMutation } from "@tanstack/react-query";
+import axiosClient from "@/config/axios";
+import { useForm } from "react-hook-form";
 
 
 export default function ComentarioGalerias() {
     const { project } = useProject();
-    const { data, isLoading } = useSWR(
+
+    const { data: commentario, isLoading } = useSWR(
         `/Comentary/getCommentaries?idProjectSap=${project.projectId}`,
         fetcher,
 
@@ -22,8 +26,96 @@ export default function ComentarioGalerias() {
 
         { refreshInterval: false, revalidateOnFocus: true }
     );
-
     const [state, setState] = useState(1)
+    const [Messenger, setMessenger] = useState(null)
+    const [edit, setEdit] = useState(null)
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+
+        formState: { errors },
+    } = useForm();
+
+    const menssegerEdit = async (data) => {
+        const { data: response } = await axiosClient.api().put(`/Comentary/${data.comentarioId}`,data.descripcion);
+        return response;
+    };
+    const mutationEdit = useMutation({
+        mutationFn: menssegerEdit,
+        onSuccess: () => {
+            mutate(`/Comentary/getCommentaries?idProjectSap=${project.projectId}`, null, true);
+        },
+
+    });
+
+    const menssegerRemover = async (data) => {
+        const { data: response } = await axiosClient.api().delete(`/Comentary/deleteCommentaries?commentaryId=${data}`);
+        return response;
+    };
+
+    const mutationRemover = useMutation({
+        mutationFn: menssegerRemover,
+        onSuccess: () => {
+            mutate(`/Comentary/getCommentaries?idProjectSap=${project.projectId}`, null, true);
+        },
+
+    });
+
+
+    const sendMensseger = async (data) => {
+        const { data: response } = await axiosClient.api().post('/Comentary/addCommentaries', data);
+        return response;
+    };
+
+    const mutationSend = useMutation({
+        mutationFn: sendMensseger,
+        onSuccess: () => {
+            mutate(`/Comentary/getCommentaries?idProjectSap=${project.projectId}`, null, true);
+        },
+
+    });
+
+
+    const onSubmit = async (data) => {
+        
+        let Json = {
+
+            commentaryId: data.comentarioId || 0,
+            descripcion: data.Mesaje,
+            projectoIdSap: project.projectId
+
+        }
+
+        console.log(edit)
+        if(edit.comentarioId != null ){
+            await mutationEdit.mutateAsync(edit) 
+            setEdit(null)
+        }else{
+            await mutationSend.mutateAsync(Json)
+        }
+        
+
+        reset();
+    };
+
+    const handlerRemover = async (idComenetario) => {
+        await mutationRemover.mutateAsync(idComenetario)
+    }
+
+    const EditMensseger = (data)=>{
+        setValue('Mesaje', data?.descripcion);
+        setEdit(data)
+    }
+
+
+    useEffect(() => {
+        setMessenger(commentario)
+    })
+
+
 
     if (isLoading)
         return (
@@ -47,15 +139,46 @@ export default function ComentarioGalerias() {
                     </div>
                     {state == 1 ? <>
                         {
-                            data?.length == 0 ? <>
-                                <div className="flex flex-col h-64 justify-center items-center text-gray-500">
+                            Messenger?.length == 0 ? <>
+                                <div className="flex flex-col h-[79%] justify-center items-center text-gray-500">
                                     <Inbox width={50} />
                                     <p className="text-[13px]">Sin comentarios</p>
                                 </div>
+                                <>
+                                {errors.Mesaje && (
+                                            <p className="text-red-500 text-[9px] ml-5">{errors.Mesaje.message}</p>
+                                        )}
+                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                        <div className="px-4 gap-3 flex items-center mt-2">
+                                            <Input
+                                                id="Mesaje"
+                                                placeholder="Nuevo comentario"
+                                                type="text"
+                                                {...register("Mesaje", {
+                                                    required: "Este campo es obligatorio", // Mensaje de error para el campo requerido
+                                                    maxLength: {
+                                                        value: 200,
+                                                        message: "El valor máximo permitido es 200 caracteres",
+                                                    },
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: "El valor mínimo permitido es 3 caracteres",
+                                                    },
+                                                })}
+
+                                            />
+                                            <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                                <SendHorizontal width={20} height={20} />
+                                            </button>
+                                        </div>
+                                       
+                                    </form>
+                                </>
+
                             </> : <>
-                                <ScrollArea className="h-[60vh]">
+                                <ScrollArea className="h-[58vh]">
                                     <>
-                                        {data?.map((data) => (
+                                        {Messenger?.map((data) => (
                                             <div
                                                 key={data.comentarioId}
                                                 className="  mt-3 rounded-lg p-3 text-gray-600 text-[12px]"
@@ -67,9 +190,31 @@ export default function ComentarioGalerias() {
                                                         </div>
                                                         <p className="font-bold">{data.nombreCompleto}</p>
                                                     </div>
-                                                    <p className="font-extralight text-[11px]">
-                                                        {dayjs(data.fechaPublicada).format("DD-MM-YYYY")}
-                                                    </p>
+                                                    <div className="flex gap-2 items-center">
+                                                        <p className="font-extralight text-[11px]">
+                                                            {dayjs(data.fechaPublicada).format("DD-MM-YYYY")}
+                                                        </p>
+                                                        <div className=" cursor-pointer">
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <EllipsisVertical width={15} />
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent className="w-15 absolute right-0">
+                                                                    <DropdownMenuItem className="flex justify-between" onClick={()=> EditMensseger(data)} >
+                                                                        <p className="font-semibold">Editar</p>
+                                                                        <Edit2 width={15} />
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem className="flex justify-between" onClick={() => handlerRemover(data.comentarioId)}>
+                                                                        <p className="font-semibold">Eliminar</p>
+                                                                        <Trash width={15} />
+                                                                    </DropdownMenuItem>
+
+
+
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div className="mt-4 border p-3 rounded-lg">
                                                     <p className="font-mono">{data.descripcion}</p>
@@ -78,6 +223,35 @@ export default function ComentarioGalerias() {
                                         ))}
                                     </>
                                 </ScrollArea>
+                                <>
+                                    <form onSubmit={handleSubmit(onSubmit)}>
+                                    {errors.Mesaje && (
+                                            <p className="text-red-500 text-[9px] ml-5 ">{errors.Mesaje.message}</p>
+                                        )}
+                                        <div className="px-4 gap-3 flex items-center mt-2">
+                                            <Input
+                                                id="Mesaje"
+                                                placeholder="Nuevo comentario"
+                                                type="text"
+                                                {...register("Mesaje", {
+                                                    required: "Este campo es obligatorio",
+                                                    maxLength: {
+                                                        value: 200,
+                                                        message: "El valor máximo permitido es 200 caracteres",
+                                                    },
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: "El valor mínimo permitido es 10 caracteres",
+                                                    },
+                                                })}
+                                            />
+                                            <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                                <SendHorizontal width={20} height={20} />
+                                            </button>
+                                        </div>
+                                       
+                                    </form>
+                                </>
                             </>
                         }
                         <div className="w-full absolute bottom-2  ">
@@ -122,3 +296,6 @@ export default function ComentarioGalerias() {
         </>
     )
 }
+
+
+
