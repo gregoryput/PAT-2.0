@@ -40,7 +40,7 @@ export default function ComentarioGalerias() {
     } = useForm();
 
     const menssegerEdit = async (data) => {
-        const { data: response } = await axiosClient.api().put(`/Comentary/${data.comentarioId}`,data.descripcion);
+        const { data: response } = await axiosClient.api().post(`/Comentary/modifyCommentary`, data);
         return response;
     };
     const mutationEdit = useMutation({
@@ -79,25 +79,28 @@ export default function ComentarioGalerias() {
     });
 
 
-    const onSubmit = async (data) => {
-        
-        let Json = {
+    const onSubmit = async (value) => {
 
-            commentaryId: data.comentarioId || 0,
-            descripcion: data.Mesaje,
-            projectoIdSap: project.projectId
 
-        }
 
-        console.log(edit)
-        if(edit.comentarioId != null ){
-            await mutationEdit.mutateAsync(edit) 
-            setEdit(null)
-        }else{
+        if (edit) {
+            let JsonEdit = {
+                descripcion: value.Mesaje,
+                commentaryId: edit?.comentarioId,
+                ProjectoIdSap: project.projectId
+            }
+            await mutationEdit.mutateAsync(JsonEdit).then(
+                setEdit(null)
+            )
+
+        } else {
+            let Json = {
+                commentaryId: value.comentarioId || 0,
+                descripcion: value.Mesaje,
+                projectoIdSap: project.projectId
+            }
             await mutationSend.mutateAsync(Json)
         }
-        
-
         reset();
     };
 
@@ -105,7 +108,7 @@ export default function ComentarioGalerias() {
         await mutationRemover.mutateAsync(idComenetario)
     }
 
-    const EditMensseger = (data)=>{
+    const EditMensseger = (data) => {
         setValue('Mesaje', data?.descripcion);
         setEdit(data)
     }
@@ -145,9 +148,9 @@ export default function ComentarioGalerias() {
                                     <p className="text-[13px]">Sin comentarios</p>
                                 </div>
                                 <>
-                                {errors.Mesaje && (
-                                            <p className="text-red-500 text-[9px] ml-5">{errors.Mesaje.message}</p>
-                                        )}
+                                    {errors.Mesaje && (
+                                        <p className="text-red-500 text-[9px] ml-5">{errors.Mesaje.message}</p>
+                                    )}
                                     <form onSubmit={handleSubmit(onSubmit)}>
                                         <div className="px-4 gap-3 flex items-center mt-2">
                                             <Input
@@ -171,7 +174,7 @@ export default function ComentarioGalerias() {
                                                 <SendHorizontal width={20} height={20} />
                                             </button>
                                         </div>
-                                       
+
                                     </form>
                                 </>
 
@@ -200,7 +203,7 @@ export default function ComentarioGalerias() {
                                                                     <EllipsisVertical width={15} />
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent className="w-15 absolute right-0">
-                                                                    <DropdownMenuItem className="flex justify-between" onClick={()=> EditMensseger(data)} >
+                                                                    <DropdownMenuItem className="flex justify-between" onClick={() => EditMensseger(data)} >
                                                                         <p className="font-semibold">Editar</p>
                                                                         <Edit2 width={15} />
                                                                     </DropdownMenuItem>
@@ -225,7 +228,7 @@ export default function ComentarioGalerias() {
                                 </ScrollArea>
                                 <>
                                     <form onSubmit={handleSubmit(onSubmit)}>
-                                    {errors.Mesaje && (
+                                        {errors.Mesaje && (
                                             <p className="text-red-500 text-[9px] ml-5 ">{errors.Mesaje.message}</p>
                                         )}
                                         <div className="px-4 gap-3 flex items-center mt-2">
@@ -249,7 +252,7 @@ export default function ComentarioGalerias() {
                                                 <SendHorizontal width={20} height={20} />
                                             </button>
                                         </div>
-                                       
+
                                     </form>
                                 </>
                             </>
