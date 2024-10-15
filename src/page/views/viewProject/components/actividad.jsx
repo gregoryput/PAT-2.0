@@ -1,15 +1,15 @@
-import { Button, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
+import { ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import { AlarmClock, Inbox } from "lucide-react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ActivityForm from "./form/activityForm";
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
 
 export default function Actividad({ actividad, selectedActividad, setSelectedActividad, setStatusActividad, toggleActivoForFalse }) {
 
-  //  console.log(actividad)
 
   const calcularDiasRestantes = (fechaInicio, fechaFin) => {
     const hoy = dayjs();
@@ -70,7 +70,7 @@ export default function Actividad({ actividad, selectedActividad, setSelectedAct
             </ScrollArea></>
         }
         <div className="w-full absolute bottom-2 pr-3 ">
-          <Button variant="ghost" className="w-full ">Crear Actividad</Button>
+        <ActivityForm/>
         </div>
       </div>
     </>

@@ -98,6 +98,15 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export {
   Button,
@@ -191,5 +200,14 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
+  
+
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   
 };

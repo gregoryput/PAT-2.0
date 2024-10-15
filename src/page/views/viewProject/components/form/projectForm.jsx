@@ -21,7 +21,7 @@ export default function ProjectForm({ data, project }) {
     } = useForm();
     const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-   
+
 
     // Función para prellenar el campo de nombre de forma programática
     const handleSetName = () => {
@@ -64,7 +64,7 @@ export default function ProjectForm({ data, project }) {
 
         };
 
-         await mutationUpdate.mutateAsync(Json);
+        await mutationUpdate.mutateAsync(Json);
     };
 
 
@@ -73,7 +73,7 @@ export default function ProjectForm({ data, project }) {
 
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen} >
             <SheetTrigger asChild>
-                <Button onClick={() => { setIsSheetOpen(true), handleSetName() }} variant="ghost" className="gap-5  rounded-sm bg-gray-100 hover:bg-blue-600 hover:text-white">
+                <Button onClick={() => { handleSetName() }} variant="ghost" className="gap-5  rounded-sm bg-gray-100 hover:bg-blue-600 hover:text-white">
                     <Bolt width={20} />
                 </Button>
             </SheetTrigger>
@@ -88,7 +88,7 @@ export default function ProjectForm({ data, project }) {
                                     id="Presupuesto"
                                     type="text"
                                     {...register("Presupuesto", {
-                                        required: true,
+                                        required: "Este campo es obligatorio",
                                         pattern: {
                                             value: /^[0-9]+$/,
                                             message: "Solo se permiten números",
@@ -105,12 +105,12 @@ export default function ProjectForm({ data, project }) {
                                 <Textarea
                                     id="Alcance"
                                     type="text"
-                                    {...register("Alcance", { required: true })}
+                                    {...register("Alcance", { required: "Este campo es obligatorio" })}
                                     className="h-56"
 
                                 />
                                 {errors.Alcance && (
-                                    <p className="text-red-500 text-sm mt-1">error</p>
+                                    <p className="text-red-500 text-sm mt-1">{errors.Alcance.message}</p>
                                 )}
                             </div>
 
@@ -145,8 +145,8 @@ export default function ProjectForm({ data, project }) {
                                                 </Select>
                                             )}></Controller>
 
-                                        {errors.fruit && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.fruit.message}</p>
+                                        {errors.Responsable && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.Responsable.message}</p>
                                         )}
                                     </div>
                                 </> : <>
