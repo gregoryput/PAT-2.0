@@ -1,10 +1,14 @@
-import { ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
-import { AlarmClock, Inbox } from "lucide-react";
+import { AlarmClock, Edit2, EllipsisVertical, Inbox, Trash } from "lucide-react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ActivityForm from "./form/activityForm";
 import useActividadStatus from "@/hook/useActivida";
+import { useMutation } from "@tanstack/react-query";
+import axiosClient from "@/config/axios";
+import { mutate } from "swr";
+import useProject from "@/hook/useProject";
 
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
@@ -12,23 +16,41 @@ dayjs.extend(customParseFormat);
 
 export default function Actividad({ getActivity, selectedActividad, setSelectedActividad, toggleActivoForFalse }) {
   const { valor, setValor } = useActividadStatus();
+  const { project } = useProject();
 
-  const calcularDiasRestantes = (fechaInicio, fechaFin) => {
-    const hoy = dayjs(); // Hoy es 16-10-2024 en este ejemplo
+      const calcularDiasRestantes = (fechaInicio, fechaFin) => {
+        const hoy = dayjs(); // Hoy es 16-10-2024 en este ejemplo
 
-    const inicio = dayjs(fechaInicio, "DD-MM-YYYY");
-    const fin = dayjs(fechaFin, "DD-MM-YYYY");
+        const inicio = dayjs(fechaInicio, "DD-MM-YYYY");
+        const fin = dayjs(fechaFin, "DD-MM-YYYY");
 
-    if (hoy.isBefore(inicio)) {
+        if (hoy.isBefore(inicio)) {
 
-      return <p className="text-orange-500 flex items-center gap-1">{`La tarea aún no ha comenzado. Faltan ${hoy.diff(inicio, 'day')}`}<AlarmClock strokeWidth={1.25} width={14} /></p>
-    } else if (hoy.isAfter(fin)) {
-      return <p className="text-red-500 flex items-center gap-1">{`La tarea está atrasada por ${fin.diff(hoy, 'day')} días.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
-    } else {
-      return <p className="text-green-500 flex items-center gap-1">{`Quedan ${fin.diff(hoy, 'day')} días para completar la tarea.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
-    }
-  };
+          return <p className="text-orange-500 flex items-center gap-1">{`La tarea aún no ha comenzado. Faltan ${hoy.diff(inicio, 'day')}`}<AlarmClock strokeWidth={1.25} width={14} /></p>
+        } else if (hoy.isAfter(fin)) {
+          return <p className="text-red-500 flex items-center gap-1">{`La tarea está atrasada por ${fin.diff(hoy, 'day')} días.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
+        } else {
+          return <p className="text-green-500 flex items-center gap-1">{`Quedan ${fin.diff(hoy, 'day')} días para completar la tarea.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
+        }
+      };
 
+      const actividadRemover = async (data) => {
+        const { data: response } = await axiosClient.api().put(`/Activities/deleteActivity?idActivity=${data.actividadId}`);
+        return response;
+      };
+
+
+      const mutationRemover = useMutation({
+        mutationFn: actividadRemover,
+        onSuccess: (() => {
+          mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
+        })
+
+      });
+
+      const Remover = async (data) => {
+        await mutationRemover.mutateAsync(data)
+      }
 
 
 
@@ -67,9 +89,31 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
                           toggleActivoForFalse();
                         }}
                       >
-                        <p className="font-semibold text-wrap text-[12px] text-black">
-                          {data.title.toUpperCase()}
-                        </p>
+                        <div className="flex justify-between w-full">
+                          <p className="font-semibold text-wrap text-[12px] text-black">
+                            {data.title.toUpperCase()}
+                          </p>
+                          <div className=" cursor-pointer">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <EllipsisVertical width={15} />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent className="w-15 absolute right-0">
+                                <DropdownMenuItem className="flex justify-between"  >
+                                  <p className="font-semibold">Editar</p>
+                                  <Edit2 width={15} />
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="flex justify-between" onClick={() => Remover(data)} >
+                                  <p className="font-semibold">Eliminar</p>
+                                  <Trash width={15} />
+                                </DropdownMenuItem>
+
+
+
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
                         <p className="font-light text-gray-400 text-[12px]">{data.author}</p>
                         <div className="mt-2 gap-3">
                           <p className="font-semibold text-[12px] mt-2">{data.category}</p>

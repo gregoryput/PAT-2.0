@@ -26,6 +26,7 @@ export default function ActivityForm() {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [date1, setDate1] = useState(null);
     const [date2, setDate2] = useState(null);
+    const [carga, setCarga] = useState(false);
 
     const { data: getUsuario, isLoading } = useSWR(
         `/Region/countryUser?idprojectSap=${project?.projectId}`,
@@ -46,13 +47,15 @@ export default function ActivityForm() {
         return response;
     };
 
-    const mutationInsert = useMutation({
+    const  mutationInsert  = useMutation({
         mutationFn: Insert,
-        onError:(()=>{
+        onError: (() => {
             mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
-
+            setCarga(false),
+            setIsSheetOpen(false) // Cierra el sheet manualmente
         })
     });
+
 
     const onSubmit = async (data) => {
         let Json = {
@@ -67,20 +70,24 @@ export default function ActivityForm() {
             startString: data.StartString,
             usuarioIdResponsable: data.Responsable
         }
-
-        setIsSheetOpen(false); // Cierra el sheet manualmente
+        setCarga(true)
         await mutationInsert.mutateAsync(Json)
     };
 
 
 
     return (
-        <>
-            <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen} >
-                <DialogTrigger asChild>
-                    <Button variant="ghost" className="w-full " >Crear actividad</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[525px]">
+
+        <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen} >
+            <DialogTrigger asChild>
+                <Button variant="ghost" className="w-full " >Crear actividad</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+                {carga == true ? <>
+                    <div className="w-full h-full flex justify-center items-center">
+                        <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-700 " />
+                    </div>
+                </> : <>
                     <DialogHeader>
                         <DialogTitle>Nueva actividad </DialogTitle>
                         <DialogDescription>
@@ -221,7 +228,7 @@ export default function ActivityForm() {
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date1 !==null ? format(date1, `dd-MM-yyyy`) :"Fecha Inicio"}`}>
+                                                            <SelectValue placeholder={`${date1 !== null ? format(date1, `dd-MM-yyyy`) : "Fecha Inicio"}`}>
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>
@@ -238,11 +245,11 @@ export default function ActivityForm() {
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
-                                                
+
                                             )}></Controller>
-                                              {errors.StartString && (
-                                                <p className="text-red-500 text-sm mt-1">{errors.StartString.message}</p>
-                                            )}
+                                        {errors.StartString && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.StartString.message}</p>
+                                        )}
                                     </div>
                                     <div>
                                         <p className="mb-3 mt-6">Estimado </p>
@@ -256,7 +263,7 @@ export default function ActivityForm() {
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date2 != null? format(date2, `dd-MM-yyyy`) : "Fecha estimada"}`}>
+                                                            <SelectValue placeholder={`${date2 != null ? format(date2, `dd-MM-yyyy`) : "Fecha estimada"}`}>
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>
@@ -275,9 +282,9 @@ export default function ActivityForm() {
                                                 </Select>
                                             )}
                                         ></Controller>
-                                         {errors.EndString && (
-                                                <p className="text-red-500 text-sm mt-1">{errors.EndString.message}</p>
-                                            )}
+                                        {errors.EndString && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.EndString.message}</p>
+                                        )}
                                     </div>
                                 </div>
                                 <Button className="w-full mt-10" type="submit">Crear actividad</Button>
@@ -285,8 +292,10 @@ export default function ActivityForm() {
                         </DialogDescription>
                     </DialogHeader>
 
-                </DialogContent>
-            </Dialog>
-        </>
+                </>}
+            </DialogContent>
+        </Dialog>
+
+
     )
 }

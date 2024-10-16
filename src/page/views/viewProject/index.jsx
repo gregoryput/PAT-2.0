@@ -19,14 +19,17 @@ import ComentarioGalerias from "./components/comentarioGalerias";
 export default function Project() {
   const { project } = useProject();
   const { activo, toggleActivoForFalse } = useActiveSearch();
-  
+
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useSWR(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`,fetcher,{ refreshInterval: false, revalidateOnFocus: false });
+  const { data, isLoading, error } = useSWR(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, fetcher, { refreshInterval: false, revalidateOnFocus: false });
   const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
   const { data: grafica } = useSWR(`Projects/realvsComprometido?projectId=${project.projectId}&year=${project.year}`, fetcher, { refreshInterval: false, revalidateOnFocus: false });
   const [selectedActividad, setSelectedActividad] = useState({});
 
+  useEffect(() => {
+
+  }, [getActivity])
 
   useEffect(() => {
     if (error) {
@@ -43,10 +46,10 @@ export default function Project() {
 
   return (
     <>
-      <Panel data={data}  />
-      <section className=" w-full h-[80%] flex  ">
+      <Panel data={data} />
+      <section className=" w-full h-[80%] flex">
         <section className="flex">
-          <Actividad getActivity={getActivity} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad}  toggleActivoForFalse={toggleActivoForFalse} />
+          <Actividad getActivity={getActivity} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} toggleActivoForFalse={toggleActivoForFalse} />
           <ActiividadDetail activo={activo} selectedActividad={selectedActividad} />
         </section>
         <ComponenteGraficos data={data} grafica={grafica} />
