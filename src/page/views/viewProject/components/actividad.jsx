@@ -4,30 +4,32 @@ import dayjs from 'dayjs';
 import { AlarmClock, Inbox } from "lucide-react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ActivityForm from "./form/activityForm";
+import useActividadStatus from "@/hook/useActivida";
+
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
 
-export default function Actividad({ actividad, selectedActividad, setSelectedActividad, setStatusActividad, toggleActivoForFalse }) {
-
+export default function Actividad({ getActivity, selectedActividad, setSelectedActividad, toggleActivoForFalse }) {
+  const { valor, setValor } = useActividadStatus();
 
   const calcularDiasRestantes = (fechaInicio, fechaFin) => {
-    const hoy = dayjs();
+    const hoy = dayjs(); // Hoy es 16-10-2024 en este ejemplo
 
-    const inicio = dayjs(fechaInicio, "DD/MM/YYYY hh:mm:ss a");
-    const fin = dayjs(fechaFin, "DD/MM/YYYY hh:mm:ss a");
+    const inicio = dayjs(fechaInicio, "DD-MM-YYYY");
+    const fin = dayjs(fechaFin, "DD-MM-YYYY");
 
     if (hoy.isBefore(inicio)) {
-      // Si la fecha actual es anterior al inicio, devuelve los días negativos
-      return hoy.diff(inicio, 'day'); // Esto ya debería devolver negativo
+
+      return <p className="text-orange-500 flex items-center gap-1">{`La tarea aún no ha comenzado. Faltan ${hoy.diff(inicio, 'day')}`}<AlarmClock strokeWidth={1.25} width={14} /></p>
     } else if (hoy.isAfter(fin)) {
-      // Si la fecha actual es posterior al final, devuelve los días negativos
-      return fin.diff(hoy, 'day');
+      return <p className="text-red-500 flex items-center gap-1">{`La tarea está atrasada por ${fin.diff(hoy, 'day')} días.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
     } else {
-      // Si la fecha actual está entre el inicio y el final, devuelve los días restantes
-      return fin.diff(hoy, 'day');
+      return <p className="text-green-500 flex items-center gap-1">{`Quedan ${fin.diff(hoy, 'day')} días para completar la tarea.`}<AlarmClock strokeWidth={1.25} width={14} /></p>
     }
-  }
+  };
+
+
 
 
   return (
@@ -37,40 +39,61 @@ export default function Actividad({ actividad, selectedActividad, setSelectedAct
           <span className=" font-bold text-[18px]">Actividades </span>
           <Tabs defaultValue="1"   >
             <TabsList className="bg-gray-100 ">
-              <TabsTrigger value="1" onClick={() => setStatusActividad(1)}>Pendiente</TabsTrigger>
-              <TabsTrigger value="2" onClick={() => setStatusActividad(2)}>Completa</TabsTrigger>
+              <TabsTrigger value="1" onClick={() => setValor(1)}>Pendiente</TabsTrigger>
+              <TabsTrigger value="2" onClick={() => setValor(2)}>Completa</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
         {
-          actividad?.length == 0 ?
+          getActivity?.length == 0 ?
             <div className="flex flex-col h-64 justify-center items-center text-gray-500">
               <Inbox width={50} />
               <p>Sin data</p>
             </div> :
-            <><ScrollArea className="h-[60vh]">
-              {actividad?.map((data, i) => (
-                <div key={i} className={`${selectedActividad.actividadId == data.actividadId ? "m-1 border mb-2 p-3 cursor-pointer rounded-sm bg-gray-100" : "m-1 border mb-2 p-3 cursor-pointer rounded-sm hover:bg-blue-50"}`} onClick={() => { setSelectedActividad(data); toggleActivoForFalse() }}>
-                  <p className="font-semibold text-wrap text-[12px] text-black " >{data.title.toUpperCase()}</p>
-                  <p className="font-light text-gray-400 text-[12px]" >{data.author}</p>
-                  <div className="mt-2 gap-3">
-                    <p className="font-semibold  text-[12px] mt-2 " >{data.category}</p>
-
-                    {
-                      data?.status == 1 ? <>
-                        <p className={`text-[12px] flex items-center gap-1 ${calcularDiasRestantes(data?.fechaInicio, data?.fechaFinal) <= 0 ? "text-red-600" : "text-green-500"}`}>
-                          {calcularDiasRestantes(data?.fechaInicio, data?.fechaFinal)}
-                          <AlarmClock strokeWidth={1.25} width={14} />
+            <>
+              <ScrollArea className="h-[60vh]">
+                {getActivity?.filter((state) => state.status === valor).length > 0 ? (
+                  getActivity
+                    ?.filter((state) => state.status === valor)
+                    .map((data, i) => (
+                      <div
+                        key={i}
+                        className={`${selectedActividad.actividadId === data.actividadId
+                          ? "m-1 border mb-2 p-3 cursor-pointer rounded-sm bg-gray-100"
+                          : "m-1 border mb-2 p-3 cursor-pointer rounded-sm hover:bg-blue-50"
+                          }`}
+                        onClick={() => {
+                          setSelectedActividad(data);
+                          toggleActivoForFalse();
+                        }}
+                      >
+                        <p className="font-semibold text-wrap text-[12px] text-black">
+                          {data.title.toUpperCase()}
                         </p>
-                      </> : null
-                    }
+                        <p className="font-light text-gray-400 text-[12px]">{data.author}</p>
+                        <div className="mt-2 gap-3">
+                          <p className="font-semibold text-[12px] mt-2">{data.category}</p>
+
+                          {data?.status === 1 && (
+                            <p className="text-[12px] flex items-center gap-1">
+                              {calcularDiasRestantes(data?.fechaInicio, data?.fechaFinal)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="flex flex-col h-64 justify-center items-center text-gray-500">
+                    <Inbox width={50} />
+                    <p>Sin data</p>
                   </div>
-                </div>
-              ))}
-            </ScrollArea></>
+                )}
+              </ScrollArea>
+
+            </>
         }
         <div className="w-full absolute bottom-2 pr-3 ">
-        <ActivityForm/>
+          <ActivityForm />
         </div>
       </div>
     </>

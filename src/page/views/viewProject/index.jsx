@@ -19,26 +19,14 @@ import ComentarioGalerias from "./components/comentarioGalerias";
 export default function Project() {
   const { project } = useProject();
   const { activo, toggleActivoForFalse } = useActiveSearch();
+  
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useSWR(
-    `Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`,
-    fetcher,
-    { refreshInterval: false, revalidateOnFocus: false }
-  );
-
-
+  const { data, isLoading, error } = useSWR(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`,fetcher,{ refreshInterval: false, revalidateOnFocus: false });
   const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
-  const { data: grafica } = useSWR(
-    `Projects/realvsComprometido?projectId=${project.projectId}&year=${project.year}`,
-    fetcher,
-
-    { refreshInterval: false, revalidateOnFocus: false }
-  );
-
-  const [statusActividad, setStatusActividad] = useState(1);
+  const { data: grafica } = useSWR(`Projects/realvsComprometido?projectId=${project.projectId}&year=${project.year}`, fetcher, { refreshInterval: false, revalidateOnFocus: false });
   const [selectedActividad, setSelectedActividad] = useState({});
-  const actividad = getActivity?.filter((state) => state.status === statusActividad);
+
 
   useEffect(() => {
     if (error) {
@@ -55,10 +43,10 @@ export default function Project() {
 
   return (
     <>
-      <Panel data={data} project={project}  />
+      <Panel data={data}  />
       <section className=" w-full h-[80%] flex  ">
         <section className="flex">
-          <Actividad actividad={actividad} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} setStatusActividad={setStatusActividad} toggleActivoForFalse={toggleActivoForFalse} />
+          <Actividad getActivity={getActivity} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad}  toggleActivoForFalse={toggleActivoForFalse} />
           <ActiividadDetail activo={activo} selectedActividad={selectedActividad} />
         </section>
         <ComponenteGraficos data={data} grafica={grafica} />

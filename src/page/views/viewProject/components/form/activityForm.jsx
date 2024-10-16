@@ -1,5 +1,5 @@
 import { fetcher } from '@/api/api';
-import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Input, Popover, PopoverContent, PopoverTrigger, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components'
+import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components'
 import { SelectGroup, SelectLabel } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import axiosClient from '@/config/axios';
@@ -24,18 +24,8 @@ export default function ActivityForm() {
     } = useForm();
 
     const [isSheetOpen, setIsSheetOpen] = useState(false);
-    let fecha = new Date();
-    const [date1, setDate1] = useState(fecha);
-    const [date2, setDate2] = useState(fecha);
-
-
-
-    // // Función para prellenar el campo de nombre de forma programática
-    // const handleSetName = () => {
-    //     setValue('Presupuesto', data?.budget);
-    //     setValue('Alcance', data?.alcance);
-    //     setValue('Responsable', `${data?.responsableId}`);
-    // };
+    const [date1, setDate1] = useState(null);
+    const [date2, setDate2] = useState(null);
 
     const { data: getUsuario, isLoading } = useSWR(
         `/Region/countryUser?idprojectSap=${project?.projectId}`,
@@ -56,31 +46,30 @@ export default function ActivityForm() {
         return response;
     };
 
-    const mutationUpdate = useMutation({
+    const mutationInsert = useMutation({
         mutationFn: Insert,
-        onSuccess: () => {
-            // Actualizamos el estado local de SWR con los nuevos datos
-            mutate(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, null, true);
+        onError:(()=>{
+            mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
 
-        },
-
+        })
     });
 
     const onSubmit = async (data) => {
-        setIsSheetOpen(false); // Cierra el sheet manualmente
         let Json = {
-            actividadId: 0,
+
+            file: undefined,
             idProjectSap: project.projectId,
-            title: data.Titulo,
-            description: data.descripcion,
-            author: 0,
-            category: 0,
-            endString: data.fechafinal,
-            startString: data.fecha,
-            usuarioIdResponsable: 0,
-            comentary: null,
-            file: null
+            title: data.Title,
+            description: data.Description,
+            author: data.Responsable,
+            category: data.Category,
+            endString: data.EndString,
+            startString: data.StartString,
+            usuarioIdResponsable: data.Responsable
         }
+
+        setIsSheetOpen(false); // Cierra el sheet manualmente
+        await mutationInsert.mutateAsync(Json)
     };
 
 
@@ -99,9 +88,9 @@ export default function ActivityForm() {
                                 <div>
                                     <p className="mb-3 mt-5">Actividad</p>
                                     <Input
-                                        id="Titulo"
+                                        id="Title"
                                         type="text"
-                                        {...register("Titulo", {
+                                        {...register("Title", {
                                             required: "Este campo es obligatorio",
                                             max: {
                                                 value: 100,
@@ -110,17 +99,17 @@ export default function ActivityForm() {
 
                                         })}
                                     />
-                                    {errors.Titulo && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.Titulo.message}</p>
+                                    {errors.Title && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.Title.message}</p>
                                     )}
                                 </div>
                                 <div >
                                     <p className="mb-3 mt-10">Descripcion </p>
 
                                     <Textarea
-                                        id="descripcion"
+                                        id="Description"
                                         type="text"
-                                        {...register("descripcion", {
+                                        {...register("Description", {
                                             required: "Este campo es obligatorio",
                                             max: {
                                                 value: 100,
@@ -130,8 +119,8 @@ export default function ActivityForm() {
                                         className="h-36"
 
                                     />
-                                    {errors.descripcion && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.descripcion.message}</p>
+                                    {errors.Description && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.Description.message}</p>
                                     )}
                                 </div>
 
@@ -182,10 +171,10 @@ export default function ActivityForm() {
                                         <div>
                                             <p className="mb-3 mt-6">Categoria</p>
                                             <Controller
-                                                name="Categoria"
+                                                name="Category"
                                                 control={control}
                                                 defaultValue="" // Valor inicial
-                                                rules={{ required: "este campo es obligatorio" }} // Validación
+                                                rules={{ required: "Este campo es obligatorio" }} // Validación
                                                 render={({ field }) => (
                                                     <Select onValueChange={field.onChange} value={field.value}  >
                                                         <SelectTrigger className="w-full">
@@ -208,8 +197,8 @@ export default function ActivityForm() {
                                                     </Select>
                                                 )}></Controller>
 
-                                            {errors.Categoria && (
-                                                <p className="text-red-500 text-sm mt-1">{errors.Categoria.message}</p>
+                                            {errors.Category && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.Category.message}</p>
                                             )}
                                         </div>
                                     </> : <>
@@ -224,15 +213,15 @@ export default function ActivityForm() {
                                         <p className="mb-3 mt-6">Inicio</p>
 
                                         <Controller
-                                            name="fecha"
+                                            name="StartString"
                                             control={control}
-                                            rules={{ required: "este campo es obligatorio" }} // Validación
+                                            rules={{ required: "Este campo es obligatorio" }} // Validación
                                             render={({ field }) => (
                                                 <Select>
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date1 ? format(date1, `dd-MM-yyyy`) : <span>Pick a date</span>}`}>
+                                                            <SelectValue placeholder={`${date1 !==null ? format(date1, `dd-MM-yyyy`) :"Fecha Inicio"}`}>
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>
@@ -240,7 +229,7 @@ export default function ActivityForm() {
                                                         <SelectGroup>
                                                             <Calendar
                                                                 mode="single"
-                                                                selected={date2}
+                                                                selected={date1}
                                                                 onSelect={(selectedDate) => {
                                                                     setDate1(selectedDate); // Esto actualiza el estado local
                                                                     field.onChange(selectedDate); // Esto actualiza el valor en el controlador
@@ -249,13 +238,17 @@ export default function ActivityForm() {
                                                         </SelectGroup>
                                                     </SelectContent>
                                                 </Select>
+                                                
                                             )}></Controller>
+                                              {errors.StartString && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.StartString.message}</p>
+                                            )}
                                     </div>
                                     <div>
                                         <p className="mb-3 mt-6">Estimado </p>
 
                                         <Controller
-                                            name="fechafinal"
+                                            name="EndString"
                                             control={control}
                                             rules={{ required: "Este campo es obligatorio." }}
                                             render={({ field }) => (
@@ -263,7 +256,7 @@ export default function ActivityForm() {
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date2 ? format(date2, `dd-MM-yyyy`) : <span>Pick a date</span>}`}>
+                                                            <SelectValue placeholder={`${date2 != null? format(date2, `dd-MM-yyyy`) : "Fecha estimada"}`}>
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>
@@ -282,6 +275,9 @@ export default function ActivityForm() {
                                                 </Select>
                                             )}
                                         ></Controller>
+                                         {errors.EndString && (
+                                                <p className="text-red-500 text-sm mt-1">{errors.EndString.message}</p>
+                                            )}
                                     </div>
                                 </div>
                                 <Button className="w-full mt-10" type="submit">Crear actividad</Button>

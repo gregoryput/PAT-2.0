@@ -9,9 +9,11 @@ import { useMutation } from "@tanstack/react-query";
 import axiosClient from "@/config/axios";
 import useSWR, { mutate } from "swr";
 import { fetcher } from "@/api/api";
+import useProject from "@/hook/useProject";
 
 
-export default function Panel({ data, project }) {
+export default function Panel({ data }) {
+    const {project} = useProject()
     const [, setCopied] = useState(false);
     const handleCopyClick = async (textToCopy) => {
         try {
@@ -23,13 +25,13 @@ export default function Panel({ data, project }) {
         }
     };
 
-    //lista de estado del proyecto 
+    //estado actual del proyecto 
     const { data: status } = useSWR('Projects/statusProject', fetcher, {
         refreshInterval: false,
         revalidateOnFocus: false
     });
 
-    ///estado actual del proyecto 
+    ///lista de estado de proyecto  
     const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, {
         refreshInterval: false,
         revalidateOnFocus: false,
