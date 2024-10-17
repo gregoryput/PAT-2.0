@@ -1,13 +1,28 @@
-import { Button, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@/components";
-import { Inbox, Trash2 } from "lucide-react";
+import { Button, Input, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@/components";
+import { Inbox, SendHorizontal, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
+import { useForm } from "react-hook-form";
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
 
 export default function ActiividadDetail({ activo, selectedActividad }) {
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+
+        formState: { errors },
+    } = useForm();
+    
+    
+    const onSubmit = async (value) => {
+        
+        reset();
+    };
 
     const truncateText = (text, maxLength) => {
         if (text.length <= maxLength) {
@@ -16,10 +31,12 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
         return text.slice(0, maxLength) + '...';
     }
 
+    
+
     return (
         <>
             {
-                selectedActividad?.responsableAuthor !== undefined  ?
+                selectedActividad?.responsableAuthor !== undefined ?
                     <>
                         <div
                             className={`bg-white  ${activo === true
@@ -29,6 +46,7 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                         >
                             <div className="p-3 border-b h-[65px] flex justify-between items-center">
                                 <span className=" font-bold text-[18px]">Actividad </span>
+
                             </div>
                             <div className="border-b  relative  text-[12px] p-1  h-[24%]">
                                 <h2 className="mt-2 mb-3 font-bold">
@@ -95,7 +113,7 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                 </div>
 
                             </div>
-                            <ScrollArea className="min-h-[35vh] h-[43vh] max-h-[45vh]">
+                            <ScrollArea className="min-h-[35vh] h-[41vh] max-h-[45vh]">
                                 {selectedActividad?.listaComentario == undefined || selectedActividad?.listaComentario?.length == 0 ? <>
                                     <div className="flex flex-col h-64 justify-center items-center text-gray-500">
                                         <Inbox width={50} />
@@ -125,17 +143,33 @@ export default function ActiividadDetail({ activo, selectedActividad }) {
                                     ))}
                                 </>}
                             </ScrollArea>
-                            <div className="w-full absolute bottom-2 pr-3  flex">
-                                <Button variant="ghost" className=" pr-4 w-16 active:text-red-700">
-                                    <Trash2 width={20} />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    className="w-52  active:bg-blue-700 active:text-white"
-                                >
-                                    Editar Actividad
-                                </Button>
-                            </div>
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                {errors.Mesaje && (
+                                    <p className="text-red-500 absolute bottom-1 text-[9px] ml-5 ">{errors.Mesaje.message}</p>
+                                )}
+                                <div className="px-4 gap-3 flex items-center mt-2">
+                                    <Input
+                                        id="Mesaje"
+                                        placeholder="Nuevo comentario"
+                                        type="text"
+                                        {...register("Mesaje", {
+                                            required: "Este campo es obligatorio",
+                                            maxLength: {
+                                                value: 200,
+                                                message: "El valor máximo permitido es 200 caracteres",
+                                            },
+                                            minLength: {
+                                                value: 3,
+                                                message: "El valor mínimo permitido es 10 caracteres",
+                                            },
+                                        })}
+                                    />
+                                    <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                        <SendHorizontal width={20} height={20} />
+                                    </button>
+                                </div>
+
+                            </form>
                         </div>
                     </> :
                     null

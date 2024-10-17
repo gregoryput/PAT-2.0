@@ -6,24 +6,30 @@ import axiosClient from '@/config/axios';
 import useProject from '@/hook/useProject';
 import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { CalendarIcon, Edit, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR, { mutate } from 'swr';
 import { Calendar } from "@/components/ui/calendar"
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
+dayjs.extend(customParseFormat);
 
-export default function ActivityForm() {
+export default function ActivityForm({ ediOpen, setEditOpen, selectedActividad, setSelectedActividad }) {
     const { project } = useProject();
 
     const {
         register,
         handleSubmit,
         control,
+        reset,
+        setValue,
         formState: { errors },
     } = useForm();
 
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [edit, setEdit] = useState(false);
     const [date1, setDate1] = useState(null);
     const [date2, setDate2] = useState(null);
     const [carga, setCarga] = useState(false);
@@ -47,19 +53,33 @@ export default function ActivityForm() {
         return response;
     };
 
-    const  mutationInsert  = useMutation({
+    const mutationInsert = useMutation({
         mutationFn: Insert,
         onError: (() => {
             mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
             setCarga(false),
-            setIsSheetOpen(false) // Cierra el sheet manualmente
+                setIsSheetOpen(false) // Cierra el sheet manualmente
+        })
+    });
+
+
+    const Update = async (data) => {
+        const { data: response } = await axiosClient.api().post('/NewActivity/NewEditActivity', data);
+        return response;
+    };
+
+    const mutationUpdate = useMutation({
+        mutationFn: Update,
+        onSuccess: (() => {
+            mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
+            setCarga(false),
+                setIsSheetOpen(false) // Cierra el sheet manualmente
         })
     });
 
 
     const onSubmit = async (data) => {
         let Json = {
-
             file: undefined,
             idProjectSap: project.projectId,
             title: data.Title,
@@ -70,17 +90,76 @@ export default function ActivityForm() {
             startString: data.StartString,
             usuarioIdResponsable: data.Responsable
         }
-        setCarga(true)
-        await mutationInsert.mutateAsync(Json)
+
+        let JsonEdit = {
+
+            idProjectSap: project.projectId,
+            title: data.Title,
+            description: data.Description,
+            author: data.Responsable,
+            category: data.Category,
+            endString: data.EndString,
+            startString: data.StartString,
+            usuarioIdResponsable: data.Responsable,
+            actividadId: selectedActividad.actividadId
+        }
+
+
+        if (edit == true) {
+            setEdit(false)
+            setCarga(true)
+            await mutationUpdate.mutateAsync(JsonEdit)
+            reset();
+        } else {
+            setCarga(true)
+            await mutationInsert.mutateAsync(Json)
+            reset();
+        }
     };
 
+    const openModal = () => {
+        if (ediOpen == true) {
+            setIsSheetOpen(true)
 
+            // esto es para cuando activen el editar esto es para la condicion editar poder saber si es insertando o editando 
+            setEdit(true)
+
+            setValue("Title", selectedActividad?.title)
+            setValue("Description", selectedActividad?.description);
+            setValue("Responsable", `${selectedActividad?.responsableAuthorId}`);
+            setValue("Category", selectedActividad?.categoryId.toString());
+            setValue("EndString", dayjs(selectedActividad?.fechaFinal, "DD-MM-YYYY"));
+            setValue("StartString", dayjs(selectedActividad?.fechaInicio, "DD-MM-YYYY"));
+
+            /// esto algo especial para los componente que tiene los data picker la fecha se cagar en el placehoder 
+            setDate1(dayjs(selectedActividad?.fechaInicio, "DD-MM-YYYY"))
+            setDate2(dayjs(selectedActividad?.fechaFinal, "DD-MM-YYYY"))
+
+        }
+        if (isSheetOpen == true) {
+            setEditOpen(false)
+
+        } else {
+            reset();
+            setDate1(null)
+            setDate2(null)
+            setSelectedActividad([])
+            setValue("Responsable", "");
+            setValue("Category", "");
+            setCarga(false);
+
+        }
+    }
+
+    useEffect(() => {
+        openModal()
+    }, [ediOpen, isSheetOpen])
 
     return (
 
         <Dialog open={isSheetOpen} onOpenChange={setIsSheetOpen} >
-            <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full " >Crear actividad</Button>
+            <DialogTrigger className="w-full " >
+                <Button variant="ghost " className="w-full " >Crear actividad</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[525px]">
                 {carga == true ? <>
@@ -228,7 +307,8 @@ export default function ActivityForm() {
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date1 !== null ? format(date1, `dd-MM-yyyy`) : "Fecha Inicio"}`}>
+                                                            <SelectValue placeholder={`${date1 !== null ? dayjs(date1).format(`DD-MM-YYYY`) : "Fecha Inicio"}`}>
+
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>
@@ -263,7 +343,7 @@ export default function ActivityForm() {
                                                     <SelectTrigger className="w-full">
                                                         <div className='flex items-center'>
                                                             <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            <SelectValue placeholder={`${date2 != null ? format(date2, `dd-MM-yyyy`) : "Fecha estimada"}`}>
+                                                            <SelectValue placeholder={`${date2 != null ? dayjs(date2).format(`DD-MM-YYYY`) : "Fecha estimada"}`}>
                                                             </SelectValue>
                                                         </div>
                                                     </SelectTrigger>

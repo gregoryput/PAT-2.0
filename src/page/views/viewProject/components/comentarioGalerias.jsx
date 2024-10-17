@@ -229,7 +229,7 @@ export default function ComentarioGalerias() {
                                 <>
                                     <form onSubmit={handleSubmit(onSubmit)}>
                                         {errors.Mesaje && (
-                                            <p className="text-red-500 text-[9px] ml-5 ">{errors.Mesaje.message}</p>
+                                            <p className="text-red-500 absolute bottom-2 text-[9px] ml-5 ">{errors.Mesaje.message}</p>
                                         )}
                                         <div className="px-4 gap-3 flex items-center mt-2">
                                             <Input

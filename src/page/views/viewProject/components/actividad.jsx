@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import axiosClient from "@/config/axios";
 import { mutate } from "swr";
 import useProject from "@/hook/useProject";
+import { useState } from "react";
 
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
@@ -17,6 +18,7 @@ dayjs.extend(customParseFormat);
 export default function Actividad({ getActivity, selectedActividad, setSelectedActividad, toggleActivoForFalse }) {
   const { valor, setValor } = useActividadStatus();
   const { project } = useProject();
+  const [ediOpen, setEditOpen] = useState(false);
 
       const calcularDiasRestantes = (fechaInicio, fechaFin) => {
         const hoy = dayjs(); // Hoy es 16-10-2024 en este ejemplo
@@ -99,7 +101,7 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
                                 <EllipsisVertical width={15} />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className="w-15 absolute right-0">
-                                <DropdownMenuItem className="flex justify-between"  >
+                                <DropdownMenuItem className="flex justify-between"  onClick={()=> {setEditOpen(true),  setSelectedActividad(data)}}>
                                   <p className="font-semibold">Editar</p>
                                   <Edit2 width={15} />
                                 </DropdownMenuItem>
@@ -114,7 +116,7 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
                             </DropdownMenu>
                           </div>
                         </div>
-                        <p className="font-light text-gray-400 text-[12px]">{data.author}</p>
+                        <p className="font-light text-gray-400 text-[12px]">{data.responsableAuthor}</p>
                         <div className="mt-2 gap-3">
                           <p className="font-semibold text-[12px] mt-2">{data.category}</p>
 
@@ -137,7 +139,7 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
             </>
         }
         <div className="w-full absolute bottom-2 pr-3 ">
-          <ActivityForm />
+          <ActivityForm  ediOpen={ediOpen} setEditOpen={setEditOpen} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad}/>
         </div>
       </div>
     </>
