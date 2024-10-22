@@ -1,32 +1,34 @@
-import { Button, Input, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@/components";
-import { CalendarCheck, Inbox, SendHorizontal } from "lucide-react";
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Input, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@/components";
+import { CalendarCheck, Edit2, EllipsisVertical, Inbox, SendHorizontal, Trash } from "lucide-react";
 import PropTypes from "prop-types";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import axiosClient from "@/config/axios";
 import useProject from "@/hook/useProject";
-import  { mutate } from "swr";
+import { mutate } from "swr";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useSelectedActividad from "@/hook/useSelectedActividad";
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
 
-export default function ActiividadDetail({ activo,getActivity ,id}) {
+export default function ActiividadDetail({ activo, getActivity, id }) {
     const {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm();
 
     const { project } = useProject();
-    const {actividad, setActividad} = useSelectedActividad();
+    const { actividad, setActividad } = useSelectedActividad();
+    const [edit, setEdit] = useState(null)
+    const [commetarioID, setCommentarioID] = useState(0)
 
 
-   
 
     const truncateText = (text, maxLength) => {
         if (text.length <= maxLength) {
@@ -48,6 +50,19 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
         },
 
     })
+    const menssegerRemover = async (data) => {
+        const { data: response } = await axiosClient.api().delete(`/Activities/deleteCommentaries?commentaryId=${data}`);
+        return response;
+    };
+
+    const mutationRemoverMenssegerActivity = useMutation({
+        mutationFn: menssegerRemover,
+        onSuccess: () => {
+            mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
+
+        },
+
+    });
 
     const SendMessenger = async (data) => {
         const { data: response } = await axiosClient.api().post('/NewActivity/NewActivityComment', data);
@@ -62,20 +77,45 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
 
     })
 
+    const Update = async (data) => {
+        const { data: response } = await axiosClient.api().put('/NewActivity/NewActivityUpdateComment', data);
+        return response;
+    };
 
-      
+    const mutationUpdate = useMutation({
+        mutationFn: Update,
+        onSuccess: (() => {
+            mutate(`/Activities/getActivityById?idProjectSap=${project.projectId}`, null, true)
+            
+        })
+    });
+
+
     const onSubmit = async (value) => {
 
         const Json = {
             actividadId: actividad?.actividadId,
             commentary: value.Mesaje,
             usuario: 2
-
         }
 
-        mutationInsertMessenger.mutateAsync(Json)
-        reset();
+        const JsonEdit ={
+            comentarioId: commetarioID ,
+            commentary: value.Mesaje,
+            usuario: 2
+        }
+
         
+        if (edit == true) {
+            await mutationUpdate.mutateAsync(JsonEdit)
+            setEdit(false)
+            setCommentarioID(0)
+            reset();
+        } else {
+            await mutationInsertMessenger.mutateAsync(Json)
+            reset();
+        }
+
     };
 
     const handlerStatus = async () => {
@@ -89,12 +129,20 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
 
     }
 
+    const EditMensseger = (data) => {
+        setValue('Mesaje', data?.descripcion);
+        setCommentarioID(data.comentarioId)
+        setEdit(true);
+    }
 
+    const handlerRemover = async (idComenetario) => {
+        await mutationRemoverMenssegerActivity.mutateAsync(idComenetario)
+    }
 
     useEffect(() => {
-      
-        setActividad(getActivity?.filter((x)=> x.actividadId === id)[0])
-      }, [getActivity]);
+
+        setActividad(getActivity?.filter((x) => x.actividadId === id)[0])
+    }, [getActivity]);
 
 
     return (
@@ -125,7 +173,7 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
                                     <div>
                                         <Popover>
                                             <PopoverTrigger className="font-semibold">
-                                                <Button  variant="ghost" className="h-7">
+                                                <Button variant="ghost" className="h-7">
                                                     Descripcion...
                                                 </Button>
                                             </PopoverTrigger>
@@ -203,9 +251,31 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
                                                     </div>
                                                     <p className="font-bold">{data.nombreCompleto}</p>
                                                 </div>
-                                                <p className="font-extralight text-[11px]">
-                                                    {dayjs(data.fechaPublicada).format("DD-MM-YYYY")}
-                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-extralight text-[11px]">
+                                                        {dayjs(data.fechaPublicada).format("DD-MM-YYYY")}
+                                                    </p>
+                                                    <div className=" cursor-pointer">
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <EllipsisVertical width={15} />
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent className="w-15 absolute right-0">
+                                                                <DropdownMenuItem className="flex justify-between" onClick={()=> EditMensseger(data)}  >
+                                                                    <p className="font-semibold">Editar</p>
+                                                                    <Edit2 width={15} />
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem className="flex justify-between" onClick={() => handlerRemover(data.comentarioId)} >
+                                                                    <p className="font-semibold">Eliminar</p>
+                                                                    <Trash width={15} />
+                                                                </DropdownMenuItem>
+
+
+
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div className="mt-4 border p-3 rounded-lg">
                                                 <p className="font-mono ">{data.descripcion}</p>
