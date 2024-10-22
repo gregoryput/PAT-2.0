@@ -11,10 +11,9 @@ import useSWR, { mutate } from "swr";
 import useProject from "@/hook/useProject";
 import { fetcher } from "@/api/api";
 import useSelectedActividad from "@/hook/useSelectedActividad";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useActiveSearch from "@/hook/useActiveSearch";
 import ActiividadDetail from "./actividadDetail";
-import eventBus from '../../../../../eventBus';
 
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados

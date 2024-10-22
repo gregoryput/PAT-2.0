@@ -6,11 +6,10 @@ import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import axiosClient from "@/config/axios";
 import useProject from "@/hook/useProject";
-import useSWR, { mutate } from "swr";
+import  { mutate } from "swr";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import useSelectedActividad from "@/hook/useSelectedActividad";
-import { fetcher } from "@/api/api";
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
@@ -126,7 +125,9 @@ export default function ActiividadDetail({ activo,getActivity ,id}) {
                                     <div>
                                         <Popover>
                                             <PopoverTrigger className="font-semibold">
-                                                Descripcion
+                                                <Button  variant="ghost" className="h-7">
+                                                    Descripcion...
+                                                </Button>
                                             </PopoverTrigger>
                                             <PopoverContent><p className="text-justify text-[12px]">{actividad?.description}</p></PopoverContent>
                                         </Popover>
