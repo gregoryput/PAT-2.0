@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, ScrollArea, Tabs, TabsList, TabsTrigger } from "@/components";
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
-import { AlarmClock, Edit2, EllipsisVertical, Inbox, Trash } from "lucide-react";
+import { AlarmClock, Edit2, EllipsisVertical, Inbox, Loader2, Trash } from "lucide-react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ActivityForm from "./form/activityForm";
 import useActividadStatus from "@/hook/useActivida";
@@ -27,7 +27,7 @@ export default function Actividad({ toggleActivoForFalse }) {
   const [id, setId] = useState(null);
   const { activo, } = useActiveSearch();
 
-  const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
+  const { data: getActivity, isValidating } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
 
 
       const calcularDiasRestantes = (fechaInicio, fechaFin) => {
@@ -67,6 +67,12 @@ export default function Actividad({ toggleActivoForFalse }) {
       
 
 
+      if (isValidating)
+        return (
+          <div className="w-full h-full flex justify-center items-center">
+            <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-700 " />
+          </div>
+        );
      
     
    

@@ -10,6 +10,7 @@ import { mutate } from "swr";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import useSelectedActividad from "@/hook/useSelectedActividad";
+import { decodeJwt2 } from "@/util/jwt";
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
@@ -27,7 +28,7 @@ export default function ActiividadDetail({ activo, getActivity, id }) {
     const { actividad, setActividad } = useSelectedActividad();
     const [edit, setEdit] = useState(null)
     const [commetarioID, setCommentarioID] = useState(0)
-
+    let userId = decodeJwt2(localStorage.getItem("token"));
 
 
     const truncateText = (text, maxLength) => {
@@ -96,13 +97,13 @@ export default function ActiividadDetail({ activo, getActivity, id }) {
         const Json = {
             actividadId: actividad?.actividadId,
             commentary: value.Mesaje,
-            usuario: 2
+            usuario: userId.nameid
         }
 
         const JsonEdit ={
             comentarioId: commetarioID ,
             commentary: value.Mesaje,
-            usuario: 2
+            usuario: userId.nameid
         }
 
         

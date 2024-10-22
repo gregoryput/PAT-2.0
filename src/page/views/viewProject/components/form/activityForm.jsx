@@ -5,8 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import axiosClient from '@/config/axios';
 import useProject from '@/hook/useProject';
 import { useMutation } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { CalendarIcon, Edit, Loader2 } from 'lucide-react';
+import { CalendarIcon, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import useSWR, { mutate } from 'swr';
@@ -14,13 +13,15 @@ import { Calendar } from "@/components/ui/calendar"
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import useSelectedActividad from '@/hook/useSelectedActividad';
+import { decodeJwt2 } from '@/util/jwt';
 
 dayjs.extend(customParseFormat);
 
-export default function ActivityForm({ ediOpen, setEditOpen  }) {
+export default function ActivityForm({ ediOpen, setEditOpen }) {
     const { project } = useProject();
-    const {actividad,setActividad} = useSelectedActividad();
-
+    const { actividad, setActividad } = useSelectedActividad();
+    let userId = decodeJwt2(localStorage.getItem("token"));
+   
     const {
         register,
         handleSubmit,
@@ -79,40 +80,40 @@ export default function ActivityForm({ ediOpen, setEditOpen  }) {
         })
     });
 
-
     const onSubmit = async (data) => {
-        let Json = {
-            file: undefined,
-            idProjectSap: project.projectId,
-            title: data.Title,
-            description: data.Description,
-            author: data.Responsable,
-            category: data.Category,
-            endString: data.EndString,
-            startString: data.StartString,
-            usuarioIdResponsable: data.Responsable
-        }
-
-        let JsonEdit = {
-
-            idProjectSap: project.projectId,
-            title: data.Title,
-            description: data.Description,
-            author: data.Responsable,
-            category: data.Category,
-            endString: data.EndString,
-            startString: data.StartString,
-            usuarioIdResponsable: data.Responsable,
-            actividadId: actividad.actividadId
-        }
-
 
         if (edit == true) {
+
+            let JsonEdit = {
+
+                idProjectSap: project.projectId,
+                title: data.Title,
+                description: data.Description,
+                author: userId.nameid,
+                category: data.Category,
+                endString: data.EndString,
+                startString: data.StartString,
+                usuarioIdResponsable: data.Responsable,
+                actividadId: actividad?.actividadId
+            }
+
             setEdit(false)
             setCarga(true)
             await mutationUpdate.mutateAsync(JsonEdit)
             reset();
         } else {
+
+            let Json = {
+                file: undefined,
+                idProjectSap: project.projectId,
+                title: data.Title,
+                description: data.Description,
+                author: userId.nameid,
+                category: data.Category,
+                endString: data.EndString,
+                startString: data.StartString,
+                usuarioIdResponsable: data.Responsable
+            }
             setCarga(true)
             await mutationInsert.mutateAsync(Json)
             reset();
@@ -144,7 +145,7 @@ export default function ActivityForm({ ediOpen, setEditOpen  }) {
             reset();
             setDate1(null)
             setDate2(null)
-           
+            setActividad(null)
             setValue("Responsable", "");
             setValue("Category", "");
             setCarga(false);
