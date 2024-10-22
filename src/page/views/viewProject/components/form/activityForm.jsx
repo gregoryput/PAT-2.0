@@ -13,11 +13,13 @@ import useSWR, { mutate } from 'swr';
 import { Calendar } from "@/components/ui/calendar"
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import useSelectedActividad from '@/hook/useSelectedActividad';
 
 dayjs.extend(customParseFormat);
 
-export default function ActivityForm({ ediOpen, setEditOpen, selectedActividad, setSelectedActividad }) {
+export default function ActivityForm({ ediOpen, setEditOpen  }) {
     const { project } = useProject();
+    const {actividad,setActividad} = useSelectedActividad();
 
     const {
         register,
@@ -101,7 +103,7 @@ export default function ActivityForm({ ediOpen, setEditOpen, selectedActividad, 
             endString: data.EndString,
             startString: data.StartString,
             usuarioIdResponsable: data.Responsable,
-            actividadId: selectedActividad.actividadId
+            actividadId: actividad.actividadId
         }
 
 
@@ -120,20 +122,19 @@ export default function ActivityForm({ ediOpen, setEditOpen, selectedActividad, 
     const openModal = () => {
         if (ediOpen == true) {
             setIsSheetOpen(true)
-
             // esto es para cuando activen el editar esto es para la condicion editar poder saber si es insertando o editando 
             setEdit(true)
 
-            setValue("Title", selectedActividad?.title)
-            setValue("Description", selectedActividad?.description);
-            setValue("Responsable", `${selectedActividad?.responsableAuthorId}`);
-            setValue("Category", selectedActividad?.categoryId.toString());
-            setValue("EndString", dayjs(selectedActividad?.fechaFinal, "DD-MM-YYYY"));
-            setValue("StartString", dayjs(selectedActividad?.fechaInicio, "DD-MM-YYYY"));
+            setValue("Title", actividad?.title)
+            setValue("Description", actividad?.description);
+            setValue("Responsable", `${actividad?.responsableAuthorId}`);
+            setValue("Category", actividad?.categoryId.toString());
+            setValue("EndString", dayjs(actividad?.fechaFinal, "DD-MM-YYYY"));
+            setValue("StartString", dayjs(actividad?.fechaInicio, "DD-MM-YYYY"));
 
             /// esto algo especial para los componente que tiene los data picker la fecha se cagar en el placehoder 
-            setDate1(dayjs(selectedActividad?.fechaInicio, "DD-MM-YYYY"))
-            setDate2(dayjs(selectedActividad?.fechaFinal, "DD-MM-YYYY"))
+            setDate1(dayjs(actividad?.fechaInicio, "DD-MM-YYYY"))
+            setDate2(dayjs(actividad?.fechaFinal, "DD-MM-YYYY"))
 
         }
         if (isSheetOpen == true) {
@@ -143,7 +144,7 @@ export default function ActivityForm({ ediOpen, setEditOpen, selectedActividad, 
             reset();
             setDate1(null)
             setDate2(null)
-            setSelectedActividad([])
+           
             setValue("Responsable", "");
             setValue("Category", "");
             setCarga(false);

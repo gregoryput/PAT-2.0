@@ -7,18 +7,29 @@ import ActivityForm from "./form/activityForm";
 import useActividadStatus from "@/hook/useActivida";
 import { useMutation } from "@tanstack/react-query";
 import axiosClient from "@/config/axios";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import useProject from "@/hook/useProject";
-import { useState } from "react";
+import { fetcher } from "@/api/api";
+import useSelectedActividad from "@/hook/useSelectedActividad";
+import { useEffect, useState } from "react";
+import useActiveSearch from "@/hook/useActiveSearch";
+import ActiividadDetail from "./actividadDetail";
+import eventBus from '../../../../../eventBus';
 
 
 /// esto sirver para darle formato a fecha con formatos "DD/MM/YYYY hh:mm:ss a" o mas complicados
 dayjs.extend(customParseFormat);
 
-export default function Actividad({ getActivity, selectedActividad, setSelectedActividad, toggleActivoForFalse }) {
+export default function Actividad({ toggleActivoForFalse }) {
   const { valor, setValor } = useActividadStatus();
+  const {actividad, setActividad} = useSelectedActividad();
   const { project } = useProject();
   const [ediOpen, setEditOpen] = useState(false);
+  const [id, setId] = useState(null);
+  const { activo, } = useActiveSearch();
+
+  const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
+
 
       const calcularDiasRestantes = (fechaInicio, fechaFin) => {
         const hoy = dayjs(); // Hoy es 16-10-2024 en este ejemplo
@@ -54,7 +65,14 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
         await mutationRemover.mutateAsync(data)
       }
 
+      
 
+
+     
+    
+   
+
+     
 
   return (
     <>
@@ -82,12 +100,13 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
                     .map((data, i) => (
                       <div
                         key={i}
-                        className={`${selectedActividad.actividadId === data.actividadId
+                        className={`${actividad?.actividadId === data?.actividadId
                           ? "m-1 border mb-2 p-3 cursor-pointer rounded-sm bg-gray-100"
                           : "m-1 border mb-2 p-3 cursor-pointer rounded-sm hover:bg-blue-50"
                           }`}
                         onClick={() => {
-                          setSelectedActividad(data);
+                          setActividad(data);
+                          setId(data.actividadId)
                           toggleActivoForFalse();
                         }}
                       >
@@ -101,11 +120,11 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
                                 <EllipsisVertical width={15} />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent className="w-15 absolute right-0">
-                                <DropdownMenuItem className="flex justify-between"  onClick={()=> {setEditOpen(true),  setSelectedActividad(data)}}>
+                                <DropdownMenuItem className="flex justify-between"  onClick={()=> {setEditOpen(true),  setActividad(data)}}>
                                   <p className="font-semibold">Editar</p>
                                   <Edit2 width={15} />
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="flex justify-between" onClick={() => Remover(data)} >
+                                <DropdownMenuItem className="flex justify-between" onClick={() => {Remover(data),toggleActivoForFalse()}  } >
                                   <p className="font-semibold">Eliminar</p>
                                   <Trash width={15} />
                                 </DropdownMenuItem>
@@ -139,9 +158,10 @@ export default function Actividad({ getActivity, selectedActividad, setSelectedA
             </>
         }
         <div className="w-full absolute bottom-2 pr-3 ">
-          <ActivityForm  ediOpen={ediOpen} setEditOpen={setEditOpen} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad}/>
+          <ActivityForm  ediOpen={ediOpen} setEditOpen={setEditOpen} />
         </div>
       </div>
+      <ActiividadDetail activo={activo} getActivity={getActivity} id={id}/>
     </>
   )
 }

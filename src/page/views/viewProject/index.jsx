@@ -1,7 +1,7 @@
 import { fetcher } from "@/api/api";
 import useProject from "@/hook/useProject";
 import "./project.css"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 import useActiveSearch from "@/hook/useActiveSearch";
@@ -10,7 +10,7 @@ import Panel from "./components/panel";
 import { Loader2 } from "lucide-react";
 import ComponenteGraficos from "./components/componenteGraficos";
 import Actividad from "./components/actividad";
-import ActiividadDetail from "./components/actividadDetail";
+
 import ComentarioGalerias from "./components/comentarioGalerias";
 
 
@@ -18,18 +18,16 @@ import ComentarioGalerias from "./components/comentarioGalerias";
 
 export default function Project() {
   const { project } = useProject();
-  const { activo, toggleActivoForFalse } = useActiveSearch();
+  const {  toggleActivoForFalse } = useActiveSearch();
 
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useSWR(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, fetcher, { refreshInterval: false, revalidateOnFocus: false });
-  const { data: getActivity } = useSWR(`/Activities/getActivityById?idProjectSap=${project.projectId}`, fetcher, { refreshInterval: false, revalidateOnFocus: false })
+
   const { data: grafica } = useSWR(`Projects/realvsComprometido?projectId=${project.projectId}&year=${project.year}`, fetcher, { refreshInterval: false, revalidateOnFocus: false });
-  const [selectedActividad, setSelectedActividad] = useState({});
 
-  useEffect(() => {
 
-  }, [getActivity])
+
 
   useEffect(() => {
     if (error) {
@@ -49,8 +47,7 @@ export default function Project() {
       <Panel data={data} />
       <section className=" w-full h-[80%] flex">
         <section className="flex">
-          <Actividad getActivity={getActivity} selectedActividad={selectedActividad} setSelectedActividad={setSelectedActividad} toggleActivoForFalse={toggleActivoForFalse} />
-          <ActiividadDetail activo={activo} selectedActividad={selectedActividad} />
+          <Actividad toggleActivoForFalse={toggleActivoForFalse} />
         </section>
         <ComponenteGraficos data={data} grafica={grafica} />
         <ComentarioGalerias />
