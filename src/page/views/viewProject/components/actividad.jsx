@@ -69,7 +69,7 @@ export default function Actividad({ toggleActivoForFalse }) {
 
       if (isValidating)
         return (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="w-[400px] h-full flex justify-center items-center">
             <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-700 " />
           </div>
         );

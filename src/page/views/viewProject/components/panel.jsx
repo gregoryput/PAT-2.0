@@ -1,7 +1,6 @@
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
-import { ChartNoAxesColumnIncreasing } from "lucide-react";
+import {  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
+
 import {  useLayoutEffect, useState } from "react";
-import PropTypes from 'prop-types';
 import dayjs from "dayjs";
 import Dashboard from "./dashboard";
 import ProjectForm from "./form/projectForm";
@@ -10,6 +9,7 @@ import axiosClient from "@/config/axios";
 import useSWR, { mutate } from "swr";
 import { fetcher } from "@/api/api";
 import useProject from "@/hook/useProject";
+import Costo from "./Costo";
 
 
 export default function Panel({ data }) {
@@ -125,11 +125,7 @@ export default function Panel({ data }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <div className="flex gap-5">
-                            <Button variant="ghost" className="gap-5 rounded-sm bg-gray-100  hover:bg-blue-600 hover:text-white">
-                                Costo
-                                <ChartNoAxesColumnIncreasing width={20} />
-                            </Button>
-
+                            <Costo/>
                             <ProjectForm  data={data} project={project} />
                         </div>
                     </div>
@@ -143,23 +139,3 @@ export default function Panel({ data }) {
 }
 
 
-Panel.propTypes = {
-    data: PropTypes.shape({
-        estadoProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        year: PropTypes.number,
-        nombreProyecto: PropTypes.string.isRequired,
-        alcance: PropTypes.string,
-        lastUpdateReal: PropTypes.string,
-        lastUpdateComprometido: PropTypes.string
-    }).isRequired,
-    project: PropTypes.shape({
-        projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    }).isRequired,
-    status: PropTypes.arrayOf(
-        PropTypes.shape({
-            value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ),
-
-};

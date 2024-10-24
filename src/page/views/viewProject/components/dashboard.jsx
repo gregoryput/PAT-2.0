@@ -68,13 +68,3 @@ export default function Dashboard({ data }) {
     )
 }
 
-
-Dashboard.propTypes = {
-    data: PropTypes.shape({
-        budget: PropTypes.number,
-        montoComprometido: PropTypes.number,
-        montoReal: PropTypes.number,
-        montoDisponible: PropTypes.number,
-    }).isRequired,
-
-};

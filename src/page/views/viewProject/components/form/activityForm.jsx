@@ -155,6 +155,7 @@ export default function ActivityForm({ ediOpen, setEditOpen }) {
 
     useEffect(() => {
         openModal()
+        
     }, [ediOpen, isSheetOpen])
 
     return (

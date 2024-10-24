@@ -108,6 +108,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
 export {
   Button,
 
@@ -209,5 +220,13 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   
 };
