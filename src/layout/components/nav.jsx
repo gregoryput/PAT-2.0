@@ -6,20 +6,22 @@ import {
   TooltipTrigger,
 } from "@/components";
 import logo from "../../assets/LogoPat.svg";
-import { House, Plus, Search } from "lucide-react";
+import { House, Search } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useProject from "@/hook/useProject";
 import useActiveSearch from "@/hook/useActiveSearch";
+import CreateProjectFrom from "@/page/views/viewProject/components/form/createProjectFrom";
+
 
 
 
 export default function Nav() {
   const navigate = useNavigate()
   const { setProject } = useProject();
-  const { activo,toggleActivo} = useActiveSearch();
+  const { activo, toggleActivo } = useActiveSearch();
 
   const rutaActual = useLocation();
-  
+
 
 
 
@@ -31,28 +33,13 @@ export default function Nav() {
 
       <div className="pt-24 overflow-hidden p-1">
         <TooltipProvider>
+        <CreateProjectFrom/>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className="w-full mb-5 text-gray-400 flex justify-center group-hover:justify-start transition-all duration-300 ease-in-out"
-              >
-                <Plus size={25} strokeWidth={2} className="flex-shrink-0" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right" // Asumiendo que la librería soporta esta configuración
-              className="  p-2 rounded shadow-lg"
-            >
-              <p>Nuevo proyecto</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                className={`w-full mb-5 text-gray-400 flex justify-center group-hover:justify-start transition-all duration-300 ease-in-out ${!activo ? "text-blue-700":""}`}
-                onClick={()=>{
+                className={`w-full mb-5 text-gray-400 flex justify-center group-hover:justify-start transition-all duration-300 ease-in-out ${!activo ? "text-blue-700" : ""}`}
+                onClick={() => {
                   toggleActivo();
                 }}
               >
@@ -70,8 +57,8 @@ export default function Nav() {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/home" ? "text-blue-700 ":"group-hover:justify-start transition-all duration-300 ease-in-out"}`}
-                onClick={()=>{
+                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/home" ? "text-blue-700 " : "group-hover:justify-start transition-all duration-300 ease-in-out"}`}
+                onClick={() => {
                   navigate("/home")
                   setProject(0)
                 }}
@@ -86,7 +73,7 @@ export default function Nav() {
               <p>Inicio</p>
             </TooltipContent>
           </Tooltip>
-          
+
         </TooltipProvider>
       </div>
     </div>

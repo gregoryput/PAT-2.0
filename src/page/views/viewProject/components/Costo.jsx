@@ -77,8 +77,8 @@ export default function Costo() {
                                             <TableHead className="w-[100px]">Denominación</TableHead>
                                             <TableHead>Estado</TableHead>
                                             <TableHead>Fecha</TableHead>
-                                            <TableHead>doc. de Referencia</TableHead>
-                                            <TableHead>moneda</TableHead>
+                                            <TableHead>Doc. de Referencia</TableHead>
+                                            <TableHead>Moneda</TableHead>
                                             <TableHead>Costo</TableHead>
                                             <TableHead>Estado OC </TableHead>
                                             <TableHead className="text-right">Fecha Entrega </TableHead>
@@ -88,9 +88,9 @@ export default function Costo() {
                                         {lista?.map((data, index) => (
                                             <TableRow key={index}>
                                                 <TableCell className="font-mediumb w-[400px]">{data.denomination}</TableCell>
-                                                <TableCell>{data.statusId === 4 ? 'Paid' : 'Pending'}</TableCell>
-                                                <TableCell>{data.docReference || 'N/A'}</TableCell>
+                                                <TableCell>{data.statusId === 4 ? 'Entregado' : 'Entrega'}</TableCell>
                                                 <TableCell>{dayjs(data.date,"DD-MM-YYYY").format("DD-MM-YYYY")|| 'N/A'}</TableCell>
+                                                <TableCell>{data.docReference || 'N/A'}</TableCell>
                                                 <TableCell >{data.currency}</TableCell>
                                                 <TableCell >{data.cost}</TableCell>
                                                 <TableCell >{data.estadoOrden || "N/A"}</TableCell>
