@@ -1,31 +1,69 @@
 import { fetcher } from "@/api/api";
+import { Controller, useForm } from "react-hook-form";
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Sheet, SheetContent, SheetTrigger, Tooltip, TooltipContent, TooltipTrigger } from "@/components";
 import { SelectGroup, SelectLabel } from "@/components/ui/select";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { Textarea } from "@/components/ui/textarea";
+import axiosClient from "@/config/axios";
+import { useMutation } from "@tanstack/react-query";
+import useProject from "@/hook/useProject";
 
 
 
 export default function CreateProjectForm() {
     const [openCreate, setOpenCreate] = useState(false);
+    const { project } = useProject();
+
     const {
         register,
         handleSubmit,
         control,
+        reset,
         formState: { errors },
     } = useForm();
 
 
-    const { data: dataPais, isLoading } = useSWR("/Pais/Pais", fetcher);
+    const { data: dataPais } = useSWR("/Pais/Pais", fetcher);
+
+    const { data: getUsuario } = useSWR(
+        `/Region/countryUser?idprojectSap=C126003-24-C04`,
+        fetcher,
+        { refreshInterval: false, revalidateOnFocus: false }
+    );
+
+    const Insert = async (data) => {
+        const { data: response } = await axiosClient.api().post('/Projects/addNewProject', data);
+        return response;
+    };
+
+    const mutationInsert = useMutation({
+        mutationFn: Insert,
+        onSuccess: (() => {
+            mutate(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, null, true)
+            reset();
+            setOpenCreate(false)
+        })
+    });
 
     const onSubmit = async (value) => {
-        console.log(value)
+
+        let Json = {
+            projectIdSap: value.CodigoSAP,
+            projectNameSap: value.NombreProyecto,
+            budget: value.Presupuesto,
+            paisId: value.Pais,
+            responsableId: value.Responsable,
+            alcance: value.Descripcion,
+            naturalezaId: value.Naturaleza
+        }
+
+        await mutationInsert.mutate(Json)
+
 
     };
 
-    console.log(dataPais)
 
 
     return (
@@ -52,31 +90,31 @@ export default function CreateProjectForm() {
             <SheetContent side="left" >
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
-                        <p className="mb-3 mt-5">CodigoSAP</p>
+                        <p className="mb-3 mt-5">Codigo SAP</p>
                         <Input
                             id="CodigoSAP"
                             type="text"
                             {...register("CodigoSAP", {
                                 required: "Este campo es obligatorio",
-                               
+
                             })}
                         />
-                        {errors.Presupuesto && (
-                            <p className="text-red-500 text-sm mt-1">{errors.Presupuesto.message}</p>
+                        {errors.CodigoSAP && (
+                            <p className="text-red-500 text-sm mt-1">{errors.CodigoSAP.message}</p>
                         )}
                     </div>
                     <div>
                         <p className="mb-3 mt-5">Nombre del proyecto</p>
                         <Input
-                            id="CodigoSAP"
+                            id="NombreProyecto"
                             type="text"
-                            {...register("CodigoSAP", {
+                            {...register("NombreProyecto", {
                                 required: "Este campo es obligatorio",
-                               
+
                             })}
                         />
-                        {errors.Presupuesto && (
-                            <p className="text-red-500 text-sm mt-1">{errors.Presupuesto.message}</p>
+                        {errors.NombreProyecto && (
+                            <p className="text-red-500 text-sm mt-1">{errors.NombreProyecto.message}</p>
                         )}
                     </div>
 
@@ -97,49 +135,116 @@ export default function CreateProjectForm() {
                             <p className="text-red-500 text-sm mt-1">{errors.Presupuesto.message}</p>
                         )}
                     </div>
+                    <div>
+                        <p className="mb-3 mt-6">Responsable</p>
+                        <Controller
+                            name="Responsable"
+                            control={control}
+                            defaultValue="" // Valor inicial
+                            rules={{ required: "Selecciona un usuario" }} // Validación
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value}  >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Seleccione un usuario" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Usuarios</SelectLabel>
+                                            {getUsuario?.map((u) => (
+                                                <SelectItem
+                                                    className="flex flex-row"
+                                                    key={u?.value}
+                                                    value={`${u.value}`}
+                                                >
+                                                    {u?.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            )}></Controller>
 
-                    {
-                        isLoading == false ? <>
-                            <div>
-                                <p className="mb-3 mt-6">Pais</p>
-                                <Controller
-                                    name="Responsable"
-                                    control={control}
-                                    defaultValue="" // Valor inicial
-                                    rules={{ required: "Selecciona el pais" }} // Validación
-                                    render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}  >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Seleccione el pais" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Pais</SelectLabel>
-                                                    {dataPais?.map((u) => (
-                                                        <SelectItem
-                                                            className="flex flex-row"
-                                                            key={u?.paisID}
-                                                            value={`${u.paisID}`}
-                                                        >
-                                                            {u?.descripcion}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                    )}></Controller>
+                        {errors.Responsable && (
+                            <p className="text-red-500 text-sm mt-1">{errors.Responsable.message}</p>
+                        )}
+                    </div>
 
-                                {errors.Responsable && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.Responsable.message}</p>
-                                )}
-                            </div>
-                        </> : <>
-                            <div className="w-full h-full flex justify-center items-center">
-                                <Loader2 className="mr-2 h-5 w-5 animate-spin text-blue-700 " />
-                            </div>
-                        </>
-                    }
-                    <Button className=" absolute bottom-10 w-[300px] right-10" type="submit">Actualizar</Button>
+
+                    <div>
+                        <p className="mb-3 mt-6">Pais</p>
+                        <Controller
+                            name="Pais"
+                            control={control}
+                            defaultValue="" // Valor inicial
+                            rules={{ required: "Selecciona el pais" }} // Validación
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value}  >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Seleccione el pais" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Pais</SelectLabel>
+                                            {dataPais?.map((u) => (
+                                                <SelectItem
+                                                    className="flex flex-row"
+                                                    key={u?.paisID}
+                                                    value={`${u.paisID}`}
+                                                >
+                                                    {u?.descripcion}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            )}></Controller>
+
+                        {errors.Pais && (
+                            <p className="text-red-500 text-sm mt-1">{errors.Pais.message}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <p className="mb-3 mt-6">Naturaleza</p>
+                        <Controller
+                            name="Naturaleza"
+                            control={control}
+                            defaultValue="" // Valor inicial
+                            rules={{ required: "Selecciona una naturaleza" }} // Validación
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange} value={field.value}  >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Seleccione un usuario" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Naturaleza</SelectLabel>
+                                            <SelectItem value="1">Plataforma</SelectItem>
+                                            <SelectItem value="2">Estrategico</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            )}></Controller>
+
+                        {errors.Naturaleza && (
+                            <p className="text-red-500 text-sm mt-1">{errors.Naturaleza.message}</p>
+                        )}
+                    </div>
+                    <div>
+                        <p className="mb-3 mt-5">Descripcion</p>
+                        <Textarea
+                            id="Descripcion"
+                            type="text"
+                            {...register("Descripcion", {
+                                required: "Este campo es obligatorio",
+                            })}
+                        />
+                        {errors.Descripcion && (
+                            <p className="text-red-500 text-sm mt-1">{errors.Descripcion.message}</p>
+                        )}
+                    </div>
+
+                    <Button className=" absolute bottom-10 w-[300px] right-10" type="submit">Crear Proyecto</Button>
                 </form>
             </SheetContent>
         </Sheet>

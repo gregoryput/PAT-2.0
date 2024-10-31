@@ -24,7 +24,6 @@ export default function Nav() {
 
 
 
-
   return (
     <div className="group bg-white h-full py-5 border-r flex flex-col items-center">
       <div className="flex justify-center">
@@ -57,9 +56,9 @@ export default function Nav() {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/home" ? "text-blue-700 " : "group-hover:justify-start transition-all duration-300 ease-in-out"}`}
+                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/Home" ? "text-blue-700 " : "group-hover:justify-start transition-all duration-300 ease-in-out"}`}
                 onClick={() => {
-                  navigate("/home")
+                  navigate("/Home")
                   setProject(0)
                 }}
               >
