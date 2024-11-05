@@ -3,7 +3,6 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -22,7 +21,7 @@ import useSearch from "@/hook/useSearch";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { SelectGroup } from "@radix-ui/react-select";
 
-import { Github, LifeBuoy, LogOut, SearchIcon, User } from "lucide-react";
+import { Github, LifeBuoy, LogOut, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -180,14 +179,9 @@ export default function Menu() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+        
 
           <DropdownMenuItem>
             <Github className="mr-2 h-4 w-4" />
@@ -195,7 +189,7 @@ export default function Menu() {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <LifeBuoy className="mr-2 h-4 w-4" />
-            <span>Support</span>
+            <span>Soporte</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
@@ -206,7 +200,7 @@ export default function Menu() {
             }}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
+            <span>Cerrar sesion</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -244,7 +244,7 @@ export default function CreateProjectForm() {
                         )}
                     </div>
 
-                    <Button className=" absolute bottom-10 w-[300px] right-10" type="submit">Crear Proyecto</Button>
+                    <Button className=" absolute bottom-10 w-[300px] right-10" type="submit">Crear proyecto</Button>
                 </form>
             </SheetContent>
         </Sheet>
