@@ -94,7 +94,7 @@ export default function Panel({ data }) {
                         <div className="flex text-gray-400 gap-2  text-[14px]">
                             <div className="mt-2 flex gap-2 ">
                                 <span className="text-gray-700 font-bold">Real</span>
-                                <p>{data?.lastUpdateReal ? dayjs(data?.lastUpdateReal,"DD/MM/YY").format('DD/MM/YY') : "N/A"}</p>
+                                <p>{data?.lastUpdateReal  !== "N/A" ? dayjs(data?.lastUpdateReal,"DD/MM/YY").format('DD/MM/YY') : "N/A"}</p>
                             </div>
                             <div className="mt-2 flex gap-2  ">
                                 <span className="text-gray-700 font-bold">Comprometido</span>
@@ -126,7 +126,7 @@ export default function Panel({ data }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <div className="flex gap-5">
-                            <BestEstimateForm />
+                            <BestEstimateForm data={data?.bestEstimates}/>
                             <Costo />
                             <ProjectForm data={data} project={project} />
                         </div>

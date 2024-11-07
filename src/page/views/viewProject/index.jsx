@@ -28,7 +28,6 @@ export default function Project() {
 
 
 
-
   useEffect(() => {
     if (error) {
       navigate("/home");

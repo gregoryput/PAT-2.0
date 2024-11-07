@@ -1,12 +1,19 @@
 import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Input } from "@/components";
+import dayjs from "dayjs";
 import { Calendar, Dices } from "lucide-react";
-import { act, useState } from "react";
+import { useState } from "react";
 
 
 
-export default function BestEstimateForm() {
-    const meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-    const [activado, setActivado] = useState(null);
+export default function BestEstimateForm({ data }) {
+    const mesesAbreviados = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    const fechaFormateada = (data) => {
+        const mesIndex = dayjs(data?.fecha).month(); // Obtiene el índice del mes (0-11)
+        return mesesAbreviados[mesIndex].toLocaleUpperCase();
+    };
+
+    const [activo, setActivado] = useState(0);
+
 
     return (
         <>
@@ -25,16 +32,18 @@ export default function BestEstimateForm() {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-wrap justify-center gap-4 py-4">
-                        {meses.map((data, i) => (
+                        {data?.map((data, i) => (
                             <div
                                 key={i}
                                 onClick={() => setActivado(i)}
-                                className={`border rounded-lg w-[250px] h-[90px] p-3 font-thin cursor-pointer`}
+                                className={`group border rounded-lg w-[250px] h-[90px] p-3 font-thin cursor-pointer hover:bg-green-500 hover:text-white ${activo == i ? "bg-blue-700 text-white" : ""}`}
                             >
-                                <div className="flex text-gray-500 gap-2 items-center">
+                                <div className={`flex text-gray-500 gap-2 items-center group-hover:text-white ${activo == i ? " text-white" : ""}  `}>
                                     <Calendar width={18} />
-                                    <p className="text-[15px]">{data.toUpperCase()}</p>
+                                    <p className="text-[15px]">{fechaFormateada(data)}</p>
                                 </div>
+
+                                {activo == i ? <><Input className="h-8 w-30 mt-2 text-blue-600"  placeholder="0" /></> : <p className="mt-3 text-[16px] ml-2"> $ {data.estimated}</p>}
                             </div>
                         ))}
                     </div>
