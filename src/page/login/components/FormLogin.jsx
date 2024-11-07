@@ -26,7 +26,7 @@ export default function FormLogin() {
       localStorage.setItem("token",data.token)
       localStorage.setItem("Rol", "Users");
       setTimeout(()=>{
-        navigate("/Home")
+        navigate("/home")
       },500)
     },
     onError: () => {

@@ -38,10 +38,7 @@ export default function Layout() {
         <div className="w-[70px] flex-shrink-0 z-10">
           <Nav />
         </div>
-        <div
-          className={`w-[380px]  flex-shrink-0  ${activo ? "desplegar-izquierda" : "desplegar-derecha"
-            }`}
-        >
+        <div className={`w-[380px]  flex-shrink-0  ${activo ? "desplegar-izquierda" : "desplegar-derecha" }`}>
           <Search />
         </div>
         <div className="flex flex-col flex-grow   lg:pl-2">

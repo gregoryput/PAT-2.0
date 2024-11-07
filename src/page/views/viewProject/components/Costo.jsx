@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger, Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components";
+import { Button, Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components";
 import useProject from "@/hook/useProject";
 import { ChartNoAxesColumnIncreasing, Loader2 } from "lucide-react";
 import useSWR from "swr";
@@ -88,13 +88,13 @@ export default function Costo() {
                                         {lista?.map((data, index) => (
                                             <TableRow key={index}>
                                                 <TableCell className="font-mediumb w-[400px]">{data.denomination}</TableCell>
-                                                <TableCell>{data.statusId === 4 ? 'Entregado' : 'Entrega'}</TableCell>
+                                                <TableCell>{data.statusId === 4 ? 'Entregado' : 'Pendiente'}</TableCell>
                                                 <TableCell>{dayjs(data.date,"DD-MM-YYYY").format("DD-MM-YYYY")|| 'N/A'}</TableCell>
                                                 <TableCell>{data.docReference || 'N/A'}</TableCell>
                                                 <TableCell >{data.currency}</TableCell>
-                                                <TableCell >{data.cost}</TableCell>
+                                                <TableCell className={`${data.cost > 0 ? "text-green-500" : "text-red-500"}`} >{data.cost}</TableCell>
                                                 <TableCell >{data.estadoOrden || "N/A"}</TableCell>
-                                                <TableCell className="text-right">{data.expireOrder !== null ? dayjs(data.expireOrder,"DD-MM-YYYY").format("DD-MM-YYYY") : "N/A"}</TableCell>
+                                                <TableCell className="text-right">{data.fechaCreacion !== null ? dayjs(data?.fechaCreacion,"DD-MM-YYYY").format("DD-MM-YYYY") : "N/A"}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

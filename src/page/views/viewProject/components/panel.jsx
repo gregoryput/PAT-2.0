@@ -1,6 +1,6 @@
-import {  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, ScrollArea } from "@/components";
 
-import {  useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import dayjs from "dayjs";
 import Dashboard from "./dashboard";
 import ProjectForm from "./form/projectForm";
@@ -10,10 +10,11 @@ import useSWR, { mutate } from "swr";
 import { fetcher } from "@/api/api";
 import useProject from "@/hook/useProject";
 import Costo from "./Costo";
+import BestEstimateForm from "./form/bestEstimateForm";
 
 
 export default function Panel({ data }) {
-    const {project} = useProject()
+    const { project } = useProject()
     const [, setCopied] = useState(false);
     const handleCopyClick = async (textToCopy) => {
         try {
@@ -35,7 +36,7 @@ export default function Panel({ data }) {
     const { data: getStatus } = useSWR(`/NewProject/NewGetStatusProject?projectIdSap=${project?.projectId}`, fetcher, {
         refreshInterval: false,
         revalidateOnFocus: false,
-        
+
     });
 
     /// estado local 
@@ -93,11 +94,11 @@ export default function Panel({ data }) {
                         <div className="flex text-gray-400 gap-2  text-[14px]">
                             <div className="mt-2 flex gap-2 ">
                                 <span className="text-gray-700 font-bold">Real</span>
-                                <p>{data?.lastUpdateReal ? dayjs(Date(data?.lastUpdateReal)).format('DD/MM/YY') : "N/A"}</p>
+                                <p>{data?.lastUpdateReal ? dayjs(data?.lastUpdateReal,"DD/MM/YY").format('DD/MM/YY') : "N/A"}</p>
                             </div>
                             <div className="mt-2 flex gap-2  ">
                                 <span className="text-gray-700 font-bold">Comprometido</span>
-                                <p>{data?.lastUpdateComprometido !== "N/A" ? dayjs(Date(data?.lastUpdateComprometido)).format('DD/MM/YY') : "N/A"}</p>
+                                <p>{data?.lastUpdateComprometido !== "N/A" ? dayjs(data?.lastUpdateComprometido,"DD/MM/YY").format('DD/MM/YY') : "N/A"}</p>
                             </div>
                         </div>
 
@@ -125,8 +126,9 @@ export default function Panel({ data }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
                         <div className="flex gap-5">
-                            <Costo/>
-                            <ProjectForm  data={data} project={project} />
+                            <BestEstimateForm />
+                            <Costo />
+                            <ProjectForm data={data} project={project} />
                         </div>
                     </div>
 
