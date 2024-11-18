@@ -77,7 +77,7 @@ return (
 
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen} >
         <SheetTrigger asChild>
-            <Button onClick={() => { handleSetName() }} variant="ghost" className="gap-5  rounded-sm bg-gray-100 hover:bg-blue-600 hover:text-white">
+            <Button onClick={() => { handleSetName() }} variant="ghost" className="gap-5  rounded-sm bg-gray-100 hover:bg-green-600 hover:text-white">
                 <Bolt width={20} />
             </Button>
         </SheetTrigger>
@@ -155,7 +155,7 @@ return (
                                 </div>
                             </> : <>
                                 <div className="w-full h-full flex justify-center items-center">
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin text-blue-700 " />
+                                    <Loader2 className="mr-2 h-5 w-5 animate-spin text-green-700 " />
                                 </div>
                             </>
                         }

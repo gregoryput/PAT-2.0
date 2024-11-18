@@ -41,11 +41,11 @@ export default function ComponenteGraficos({data,grafica}) {
     const chartConfig = {
         desktop: {
           label: "comprometido",
-          color: "red",
+          color: "gray",
         },
         mobile: {
           label: "real",
-          color: "blue",
+          color: "green",
         },
       }
     
@@ -105,7 +105,7 @@ export default function ComponenteGraficos({data,grafica}) {
                                 <Line
                                     dataKey="presupuesto"
                                     type="monotone"
-                                    stroke="green"
+                                    stroke="orange"
                                     strokeWidth={2}
                                     dot={false}
                                 />

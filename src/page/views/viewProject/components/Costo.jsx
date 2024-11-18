@@ -39,7 +39,7 @@ export default function Costo() {
         <>
             <Drawer>
                 <DrawerTrigger asChild>
-                    <Button variant="ghost"  onClick={()=> setFilter("Todo")} className="gap-5 rounded-sm bg-gray-100  hover:bg-blue-600 hover:text-white">
+                    <Button variant="ghost"  onClick={()=> setFilter("Todo")} className="gap-5 rounded-sm bg-gray-100  hover:bg-green-600 hover:text-white">
                         Costo
                         <ChartNoAxesColumnIncreasing width={20} />
                     </Button>
@@ -47,7 +47,7 @@ export default function Costo() {
                 <DrawerContent >
                     {isValidating == true || isloanding == true  ? <>
                         <div className="w-full h-[800px] flex justify-center items-center">
-                            <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-700 " />
+                            <Loader2 className="mr-2 h-10 w-10 animate-spin text-green-700 " />
                         </div>
                     </> : <>
                         <div className="mx-36 h-[800px] ">
@@ -57,13 +57,13 @@ export default function Costo() {
                                     <DrawerDescription>Registro de recurso utilizado en este proyecto.</DrawerDescription>
                                 </DrawerHeader>
                                 <div className=" rounded-md border border-gray-200">
-                                    <Button variant="ghost" className={`rounded-r-none ${filter == "Todo" ? "bg-blue-500 text-white" : ""}`} onClick={() => setFilter("Todo")}  >
+                                    <Button variant="ghost" className={`rounded-r-none ${filter == "Todo" ? "bg-green-500 text-white" : ""}`} onClick={() => setFilter("Todo")}  >
                                         Todo
                                     </Button>
-                                    <Button variant="ghost" className={`rounded-none ${filter == "Real" ? "bg-blue-500 text-white" : ""} `} onClick={() => setFilter("Real")}  >
+                                    <Button variant="ghost" className={`rounded-none ${filter == "Real" ? "bg-green-500 text-white" : ""} `} onClick={() => setFilter("Real")}  >
                                         Real
                                     </Button>
-                                    <Button variant="ghost" className={`rounded-l-none ${filter == "Comprometido" ? "bg-blue-500 text-white" : ""}`} onClick={() => setFilter("Comprometido")}  >
+                                    <Button variant="ghost" className={`rounded-l-none ${filter == "Comprometido" ? "bg-green-500 text-white" : ""}`} onClick={() => setFilter("Comprometido")}  >
                                         Comprometido
                                     </Button>
 

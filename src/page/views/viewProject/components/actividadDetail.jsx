@@ -160,7 +160,7 @@ export default function ActiividadDetail({ activo, getActivity, id }) {
                             <div className="p-3 border-b h-[65px] flex justify-between items-center">
                                 <span className=" font-bold text-[18px]">Actividad </span>
                                 <div className="flex">
-                                    <Button variant="ghost" className={`gap-4 text-gray-500 ${actividad.status == 1 ? "hover:text-white hover:bg-blue-500" : " text-white bg-green-500"} `} onClick={() => handlerStatus()}>
+                                    <Button variant="ghost" className={`gap-4 text-gray-500 ${actividad.status == 1 ? "hover:text-white hover:bg-green-500" : " text-white bg-green-500"} `} onClick={() => handlerStatus()}>
                                         {actividad.status == 1 ? "Incompleta" : "Completa"}
                                         <CalendarCheck />
                                     </Button>
@@ -307,7 +307,7 @@ export default function ActiividadDetail({ activo, getActivity, id }) {
                                                 },
                                             })}
                                         />
-                                        <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                        <button type="submit" className="bg-green-500 rounded-full text-blue-50 p-2 cursor-pointer">
                                             <SendHorizontal width={20} height={20} />
                                         </button>
                                     </div>

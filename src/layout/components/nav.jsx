@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components";
-import logo from "../../assets/LogoPat.svg";
+import logo from "../../assets/logo.jpeg";
 import { House, Search } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useProject from "@/hook/useProject";
@@ -37,7 +37,7 @@ export default function Nav() {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full mb-5 text-gray-400 flex justify-center group-hover:justify-start transition-all duration-300 ease-in-out ${!activo ? "text-blue-700" : ""}`}
+                className={`w-full mb-5 text-gray-400 flex justify-center group-hover:justify-start transition-all duration-300 ease-in-out ${!activo ? "text-green-700" : ""}`}
                 onClick={() => {
                   toggleActivo();
                 }}
@@ -56,7 +56,7 @@ export default function Nav() {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/home" ? "text-blue-700 " : "group-hover:justify-start transition-all duration-300 ease-in-out"}`}
+                className={`w-full text-gray-400 flex justify-center  ${rutaActual.pathname == "/home" ? "text-green-700 " : "group-hover:justify-start transition-all duration-300 ease-in-out"}`}
                 onClick={() => {
                   navigate("/home")
                   setProject(0)

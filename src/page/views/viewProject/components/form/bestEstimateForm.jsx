@@ -11,7 +11,7 @@ import { mutate } from "swr";
 
 
 export default function BestEstimateForm({ data }) {
-  const { project } = useProject();
+    const { project } = useProject();
 
     const mesesAbreviados = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
     const fechaFormateada = (data) => {
@@ -31,7 +31,7 @@ export default function BestEstimateForm({ data }) {
         mutationFn: Insert,
         onSuccess: (() => {
             mutate(`Projects/indicadoresDeCostoByProjectIdSap?projectId=${project.projectId}&year=${project.year}`, null, true)
-         
+
         })
     });
 
@@ -62,7 +62,7 @@ export default function BestEstimateForm({ data }) {
         <>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button variant="ghost" className="gap-5 rounded-sm bg-gray-100 hover:bg-blue-600 hover:text-white">
+                    <Button variant="ghost" className="gap-5 rounded-sm bg-gray-100 hover:bg-green-600 hover:text-white">
                         <p>Best Estimate</p>
                         <Dices width={20} />
                     </Button>
@@ -75,11 +75,11 @@ export default function BestEstimateForm({ data }) {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-wrap justify-center gap-4 py-4">
-                        {data?.map((data ) => (
+                        {data?.map((data) => (
                             <div
                                 key={data.bestEstimateId}
                                 onClick={() => setActivado(data)}
-                                className={`group border rounded-lg w-[250px] h-[90px] p-3 font-thin cursor-pointer hover:bg-green-500 hover:text-white ${activo.bestEstimateId == data.bestEstimateId ? "bg-blue-700 text-white" : ""}`}
+                                className={`group border rounded-lg w-[250px] h-[90px] p-3 font-thin cursor-pointer hover:bg-orange-500 hover:text-white ${activo.bestEstimateId == data.bestEstimateId ? "bg-green-500 text-white" : ""}`}
                             >
                                 <div className={`flex text-gray-500 gap-2 items-center group-hover:text-white ${activo.bestEstimateId == data.bestEstimateId ? " text-white" : ""}  `}>
                                     <Calendar width={18} />
@@ -91,13 +91,13 @@ export default function BestEstimateForm({ data }) {
                                     <form >
                                         <Input
                                             {...register("estimated", {
-                                                required: "Este campo es obligatorio", 
+                                                required: "Este campo es obligatorio",
                                                 pattern: {
                                                     value: /^[0-9]+$/,
                                                     message: "Solo se permiten números",
                                                 },
                                             })}
-                                            className="h-8 w-30 mt-2 text-blue-600"
+                                            className="h-8 w-30 mt-2 text-orange-600"
                                             placeholder={`${data?.estimated}`}
                                         />
 
@@ -106,12 +106,14 @@ export default function BestEstimateForm({ data }) {
                             </div>
                         ))}
                     </div>
-                    <Button
-                        onClick={handleCustomSubmit} // Llama a nuestra función de envío personalizada
-                        className="mt-4 bg-blue-500 text-white p-2 rounded"
-                    >
-                        Actualizar
-                    </Button>
+                    <div className="flex justify-end">
+                        <Button
+                            onClick={handleCustomSubmit} // Llama a nuestra función de envío personalizada
+                            className="w-40 flex  mt-4 bg-green-500 text-white p-2 rounded"
+                        >
+                            Actualizar
+                        </Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </>

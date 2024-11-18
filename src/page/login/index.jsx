@@ -1,5 +1,5 @@
-import imgLogoCemex from "../../assets/res/cemexLogo.webp";
-import logo from "../../assets/LogoPat.svg";
+// import imgLogoCemex from "../../assets/logo.jpeg";
+import logo from "../../assets/logo.jpeg";
 import "./login.css";
 import { toast, Toaster } from "sonner";
 import FormLogin from "./components/FormLogin";
@@ -40,9 +40,9 @@ export default function Login() {
             />
             <p
               className="pt-2 px-4"
-              style={{ fontWeight: "bold", fontSize: "15px" }}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
             >
-              Project Administration Tool
+              ProTrack
             </p>
           </div>
 
@@ -93,13 +93,13 @@ export default function Login() {
 
       <section className="w-full fondo ">
         <div className="absolute bottom-0 mb-8 ml-4">
-          <img
+          {/* <img
             src={imgLogoCemex}
             alt="fondo"
             style={{
               width: "100px",
             }}
-          />
+          /> */}
         </div>
         <div className=" bg-black/20 w-full h-full  "></div>
         <p

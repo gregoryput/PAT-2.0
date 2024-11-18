@@ -93,7 +93,7 @@ export default function Search() {
   const agregarPorCumplimiento = (data) => {
     return data?.map((item) => {
       let cumplimientoClasificacion = "";
-  
+
       // Clasificar el cumplimiento
       if (item.cumplimiento > 105) {
         cumplimientoClasificacion = "n/a"; // No especificado, ajusta según tus necesidades
@@ -107,14 +107,14 @@ export default function Search() {
         }
         cumplimientoClasificacion = "3";
       }
-  
+
       return {
         ...item,
         cumplimientoClasificacion,
       };
     });
   };
-  
+
 
   const filtrado = (select, value) => {
     let d = agregarPorCumplimiento(data);
@@ -190,25 +190,25 @@ export default function Search() {
   if (isLoading || l)
     return (
       <div className="w-full h-full flex justify-center  items-center">
-        <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-600 " />
+        <Loader2 className="mr-2 h-10 w-10 animate-spin text-green-600 " />
       </div>
     );
 
   return (
-    <div className={` h-full w-[390px] absolute border-r top-0 ${activo? "desplegar-izquierda" : "despliegueDerecha"}  bg-white `}>
+    <div className={` h-full w-[390px] absolute border-r top-0 ${activo ? "desplegar-izquierda" : "despliegueDerecha"}  bg-white `}>
       <div className="px-5 ">
         <section className=" flex items-center h-[70px] bg-white  ">
-          <h3 className=" text-[15px] font-bold">
-            Project Administration Tool
+          <h3 className=" text-[20px] font-bold">
+            ProTrack
           </h3>
-         
+
         </section>
 
         <section>
           <div className="flex items-center justify-between py-5 ">
             <p className="font-bold text-[25px]  ">Proyectos</p>
             <span className=" mr-5 text-[22px] font-bold">
-             { data?.length}
+              {data?.length}
             </span>
           </div>
           <div className="relative flex items-center pb-5">
@@ -241,22 +241,22 @@ export default function Search() {
 
                 {buttonValue !== 0 ? (
                   <>
-                    <div className=" absolute left-56 w-18 bg-blue-700 rounded-lg px-5 py-2  text-white">
+                    <div className=" absolute left-56 w-18 bg-green-500 rounded-lg px-5 py-2  text-white">
                       <Label>
                         {buttonValue == "1"
                           ? "Alto"
                           : buttonValue == "2"
-                          ? "Medio"
-                          : buttonValue == "3"
-                          ? "Bajo"
-                          : null}
+                            ? "Medio"
+                            : buttonValue == "3"
+                              ? "Bajo"
+                              : null}
                       </Label>
                     </div>
                   </>
                 ) : null}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="ml-20 flex gap-2 border-none  w-[500px] bg-blue-800 text-white">
+            <PopoverContent className="ml-20 flex gap-2 border-none  w-[500px] bg-green-600 text-white">
               <Select
                 onValueChange={(value) => {
                   filtrado(value);
@@ -285,9 +285,8 @@ export default function Search() {
                   setCurrentSelect("Todos");
                 }}
                 variant="ghost"
-                className={`gap-2 ${
-                  buttonValue == "1" ? "bg-white text-blue-800" : ""
-                }`}
+                className={`gap-2 ${buttonValue == "1" ? "bg-white text-green-500" : ""
+                  }`}
               >
                 <Laugh className=" cursor-default" />
                 Alto
@@ -300,9 +299,8 @@ export default function Search() {
                   setCurrentSelect("Todos");
                 }}
                 variant="ghost"
-                className={`gap-2 ${
-                  buttonValue == "2" ? "bg-white text-blue-800" : ""
-                }`}
+                className={`gap-2 ${buttonValue == "2" ? "bg-white text-green-500" : ""
+                  }`}
               >
                 <Annoyed className=" cursor-default" />
                 Medio
@@ -315,9 +313,8 @@ export default function Search() {
                   setCurrentSelect("Todos");
                 }}
                 variant="ghost"
-                className={`gap-2 ${
-                  buttonValue == "3" ? "bg-white text-blue-800" : ""
-                }`}
+                className={`gap-2 ${buttonValue == "3" ? "bg-white text-green-500" : ""
+                  }`}
               >
                 <Frown className=" cursor-default" />
                 Bajo
@@ -331,11 +328,10 @@ export default function Search() {
           {dataState?.map((item) => (
             <div
               key={item?.idProjectoSAP}
-              className={`border m-1 p-3 rounded-[10px] ${
-                item.idProjectoSAP == project.projectId
-                  ? "bg-blue-800 text-white"
+              className={`border m-1 p-3 rounded-[10px] ${item.idProjectoSAP == project.projectId
+                  ? "bg-green-600 text-white"
                   : "  bg-white hover:bg-slate-100 "
-              } `}
+                } `}
               onClick={() => {
                 projectSelect(item);
               }}
@@ -345,7 +341,7 @@ export default function Search() {
                   <p className="text-[13px] font-semibold">
                     {item.projectName.toUpperCase()}
                   </p>
-                  <p className="text-gray-400  font-extralight text-[13px]">
+                  <p className=" font-extralight text-[13px]">
                     {item.responsable}
                   </p>
                 </div>
@@ -363,11 +359,10 @@ export default function Search() {
               <div className="mt-3">
                 <Badge
                   variant="outline"
-                  className={`text-[11px] ${
-                    item.idProjectoSAP == project.projectId
-                      ? "bg-blue-800 text-white"
+                  className={`text-[11px] ${item.idProjectoSAP == project.projectId
+                      ? "bg-green-600 text-white"
                       : "   hover:bg-slate-100 "
-                  }`}
+                    }`}
                 >
                   {item.narutalezaNombre}
                 </Badge>

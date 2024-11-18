@@ -167,7 +167,7 @@ export default function ActivityForm({ ediOpen, setEditOpen }) {
             <DialogContent className="sm:max-w-[525px]">
                 {carga == true ? <>
                     <div className="w-full h-full flex justify-center items-center">
-                        <Loader2 className="mr-2 h-10 w-10 animate-spin text-blue-700 " />
+                        <Loader2 className="mr-2 h-10 w-10 animate-spin text-green-700 " />
                     </div>
                 </> : <>
                     <DialogHeader>
@@ -250,7 +250,7 @@ export default function ActivityForm({ ediOpen, setEditOpen }) {
                                         </div>
                                     </> : <>
                                         <div className="w-full h-full flex justify-center items-center">
-                                            <Loader2 className="mr-2 h-5 w-5 animate-spin text-blue-700 " />
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin text-green-700 " />
                                         </div>
                                     </>
                                 }
@@ -292,7 +292,7 @@ export default function ActivityForm({ ediOpen, setEditOpen }) {
                                         </div>
                                     </> : <>
                                         <div className="w-full h-full flex justify-center items-center">
-                                            <Loader2 className="mr-2 h-5 w-5 animate-spin text-blue-700 " />
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin text-green-700 " />
                                         </div>
                                     </>
                                 }

@@ -170,7 +170,7 @@ export default function ComentarioGalerias() {
                                                 })}
 
                                             />
-                                            <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                            <button type="submit" className="bg-green-500 rounded-full text-blue-50 p-2 cursor-pointer">
                                                 <SendHorizontal width={20} height={20} />
                                             </button>
                                         </div>
@@ -248,7 +248,7 @@ export default function ComentarioGalerias() {
                                                     },
                                                 })}
                                             />
-                                            <button type="submit" className="bg-blue-500 rounded-full text-blue-50 p-2 cursor-pointer">
+                                            <button type="submit" className="bg-green-500 rounded-full text-blue-50 p-2 cursor-pointer">
                                                 <SendHorizontal width={20} height={20} />
                                             </button>
                                         </div>

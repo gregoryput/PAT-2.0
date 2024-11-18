@@ -117,11 +117,11 @@ function Component({ chartData }) {
   const chartConfig = {
     Asginado: {
       label: "Asginado ",
-      color: "#2563eb",
+      color: "gray",
     },
     Disponible: {
       label: "Disponible ",
-      color: "#E4003A",
+      color: "#16A34A",
     },
   };
   return (

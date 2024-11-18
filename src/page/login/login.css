@@ -1,6 +1,6 @@
 .fondo {
 
-    background-image: url('../../assets/res/fondo.webp');
+    background-image: url('../../assets/fondo.jpeg');
     background-size: cover;
     /* Para que la imagen cubra todo el área del elemento */
     background-position: center top;

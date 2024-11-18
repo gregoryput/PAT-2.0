@@ -78,8 +78,8 @@ export default function Menu() {
           <PopoverTrigger asChild>
             <div className="relative flex items-center ml-5">
               <SearchIcon className="absolute left-3 w-5 h-5" />
-              <Button
-                className="pl-10 hover:bg-blue-700 hover:text-white"
+              <Button disabled
+                className="pl-10 hover:bg-green-600 hover:text-white"
                 variant="ghost"
               >
                 <p className="tex-[20px]">
@@ -157,7 +157,7 @@ export default function Menu() {
                 </Select>
               </div>
             </div>
-            <Button onClick={() => handlerForm()} className="w-full mt-5">
+            <Button disabled onClick={() => handlerForm()} className="w-full mt-5">
               Buscar
             </Button>
           </PopoverContent>
@@ -173,7 +173,7 @@ export default function Menu() {
               <AvatarFallback>CN</AvatarFallback>
             </Avatar> */}
 
-            <div className="w-11 h-11 bg-blue-700 rounded-full flex items-center justify-center">
+            <div className="w-11 h-11 bg-green-600 rounded-full flex items-center justify-center">
               <p className="text-white font-bold text-[16px]">{userName?.slice(0,1)}</p>
             </div>
           </div>
